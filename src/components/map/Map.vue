@@ -181,6 +181,7 @@ export default {
                   })
                 ]
           })
+
           // Kortmarkøren skal sættes, når applikationen første gang er loadet
           setTimeout(() => {
             const pinnedMarker = document.getElementById('pinned-marker')
@@ -196,15 +197,15 @@ export default {
 
           // Lyt efter brugerklik på kortet med kortmarkøren og foretag evt. transformation
           olMap.value.on('click', e => {
-            const mpos = olMap.value.getEventCoordinate(e.originalEvent)
+            const mousePosition = olMap.value.getEventCoordinate(e.originalEvent)
             // Transformér kun hvis EPSG-koderne er forskellige
             if (mapProjection !== inputEPSG.value) {
-              store.dispatch('trans/get', mapProjection + '/' + inputEPSG.value + '/' + mpos[0] + ',' + mpos[1])
+              store.dispatch('trans/get', mapProjection + '/' + inputEPSG.value + '/' + mousePosition[0] + ',' + mousePosition[1])
                 .then(() => {
-                  const output = store.state.trans.data
+                  const transformationData = store.state.trans.data
                   // Abort hvis fejl
-                  if (output.message !== undefined) {
-                    error.value = output.message
+                  if (transformationData.message !== undefined) {
+                    error.value = transformationData.message
                     errorVisible.value = true
                     window.setTimeout(() => {
                       errorVisible.value = false
@@ -213,11 +214,15 @@ export default {
                   }
                   // Vi lader korttransformationer med markøren være udelukkende 2D-transformationer.
                   // Brugeren må selv indstaste en højdemeter manuelt, hvis de vil have det.
-                  inputCoords.value = [output.v1, output.v2, inputCoords.value[2]]
+                  inputCoords.value = [
+                    transformationData.v1,
+                    transformationData.v2,
+                    inputCoords.value[2]
+                  ]
                 })
             // Ellers er koordinaterne ens
             } else {
-              const output = [parseFloat(mpos[0]), parseFloat(mpos[1]), inputCoords.value[2]]
+              const output = [parseFloat(mousePosition[0]), parseFloat(mousePosition[1]), inputCoords.value[2]]
               inputCoords.value = output
             }
             const pinnedMarker = document.getElementById('pinned-marker')
@@ -225,7 +230,7 @@ export default {
               element: pinnedMarker,
               positioning: 'center-center'
             })
-            overlay.setPosition([parseFloat(mpos[0]), parseFloat(mpos[1])])
+            overlay.setPosition([parseFloat(mousePosition[0]), parseFloat(mousePosition[1])])
             olMap.value.addOverlay(overlay)
           })
         })

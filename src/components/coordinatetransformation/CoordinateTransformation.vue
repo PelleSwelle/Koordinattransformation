@@ -2,7 +2,7 @@
   <section v-show="!menuClosed || window.width > 703" class="container">
     <article class="coordinate-transformation-box" ref="mother">
       <InputCard class="input"
-        @input-epsg-changed="inputEPSGChanged"
+        @input-epsg-changed="onInputEPSGChanged"
         @error-occurred="errorOccurred"
         @input-coords-changed="inputCoordsChanged"
         @is-3d-changed="is3DChanged"
@@ -35,11 +35,13 @@ import { defineAsyncComponent, ref, inject } from 'vue'
 
 export default {
   name: 'CoordinateTransformation',
+
   components: {
     InputCard: defineAsyncComponent(() => import('@/components/coordinatetransformation/InputCard')),
     OutputCard: defineAsyncComponent(() => import('@/components/coordinatetransformation/OutputCard')),
     MenuCloser: defineAsyncComponent(() => import('@/components/coordinatetransformation/MenuCloser'))
   },
+
   props: {
     mapError: {
       type: String,
@@ -47,6 +49,7 @@ export default {
         return ''
       }
     },
+
     mapErrorVisible: {
       type: Boolean,
       default () {
@@ -54,33 +57,45 @@ export default {
       }
     }
   },
+
   methods: {
-    inputEPSGChanged (code) {
-      this.inputEPSG = code.srid
-      this.$emit('input-epsg-changed', code.srid)
+    /**
+     * sets this.inputEPSG to the argument's srid
+     * @param {string} epsg
+     */
+    onInputEPSGChanged (epsg) {
+      this.inputEPSG = epsg.srid
+      this.$emit('input-epsg-changed', epsg.srid)
     },
-    inputCoordsChanged (coords) {
+
+    onInputCoordsChanged (coords) {
       this.inputCoords = coords
       this.$emit('input-coords-changed', coords)
     },
+
     is3DChanged (state) {
       this.is3D = state
     },
+
     errorOccurred (state, err) {
       this.error = err
       this.errorVisible = state
     },
+
     coordinatesCopied (state) {
       this.popupVisible = state
     },
+
     closeMenu () {
       this.menuClosed = !this.menuClosed
     },
+
     handleResize () {
       this.window.width = window.innerWidth
       this.window.height = window.innerHeight
     }
   },
+
   setup () {
     const inputCoords = ref(inject('inputCoords'))
     const is3D = ref(true)
@@ -103,6 +118,7 @@ export default {
       is3D
     }
   },
+
   created () {
     window.addEventListener('resize', this.handleResize)
     this.handleResize()

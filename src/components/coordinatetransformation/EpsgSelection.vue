@@ -43,12 +43,8 @@
       <article class="selection-list" :class="{ isOutput: isOutput }">
         <ul v-for="CRS in filteredCRS" :key="CRS">
           <li
-            @click="
-              chosenInput = CRS.title_short;
-              inputActive = false;
-              if (isOutput)
-                outputSelected(CRS);
-              epsgChanged(CRS);
+            @click="chosenInput = CRS.title_short; inputActive = false; if (isOutput) outputSelected(CRS);
+            onEpsgChanged(CRS);
             "
           >
             {{ CRS.title_short }}
@@ -68,7 +64,7 @@ import { useStore } from 'vuex'
 import { useRoute } from 'vue-router'
 
 export default {
-  name: 'CoordinateSelectionComponent',
+  name: 'EpsgSelection',
   props: {
     // Er vi i input- eller outputkomponentet?
     isOutput: {
@@ -79,15 +75,20 @@ export default {
     }
   },
   methods: {
-    outputSelected (code) {
+    outputSelected (epsg) {
       // Der styles forskelligt alt efter om en EPSG-kode i outputmenuen er valgt, eller ej
       // I første instans er der ikke valgt nogen, men når først den er valgt, vil den blive ved med at være valgt.
       this.outputNotSelected = false
-      this.$emit('output-selected', code)
+      this.$emit('output-selected', epsg)
     },
-    epsgChanged (code) {
+
+    /**
+     * emits an event when the EPSG code is changed
+     * @param { string } epsg - the selected EPSG code
+     */
+    onEpsgChanged (epsg) {
       // Hvis af en EPSG-koderne ændres, skal der foretages en passende ændring af input- og/eller outputkoordinaterne
-      this.$emit('epsg-changed', code)
+      this.$emit('epsg-changed', epsg)
     }
   },
   setup (props) {
