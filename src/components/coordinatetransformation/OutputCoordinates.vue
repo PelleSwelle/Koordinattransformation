@@ -2,7 +2,7 @@
   <section class="output-coordinate">
     <h3>Output</h3>
     <section class="coordinate-selection-wrapper">
-      <CoordinateSelection
+      <EpsgSelection
         :isOutput="true"
         :outputSelected="!outputSelected"
         @output-selected="outputSelectedMethod"/>
@@ -147,7 +147,7 @@ export default {
   },
 
   components: {
-    CoordinateSelection: defineAsyncComponent(() => import('@/components/coordinatetransformation/CoordinateSelection')),
+    EpsgSelection: defineAsyncComponent(() => import('@/components/coordinatetransformation/EpsgSelection')),
     Loader: defineAsyncComponent(() => import('@/components/shared/Loader'))
   },
 

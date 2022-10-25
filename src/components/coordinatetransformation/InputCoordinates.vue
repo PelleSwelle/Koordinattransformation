@@ -4,7 +4,7 @@
       <h3>Input</h3>
     </div>
     <section class="coordinate-selection-wrapper">
-      <CoordinateSelection :isOutput="false" @epsg-changed="inputEPSGChanged"/>
+      <EpsgSelection :isOutput="false" @epsg-changed="inputEPSGChanged"/>
     </section>
     <div class="input">
       <span class="first-input" :class="{isDegreesInput: isDegrees, isMetresInput: !isDegrees}">
@@ -211,7 +211,7 @@ export default {
   name: 'InputCoordinates',
 
   components: {
-    CoordinateSelection: defineAsyncComponent(() => import('@/components/coordinatetransformation/CoordinateSelection'))
+    EpsgSelection: defineAsyncComponent(() => import('@/components/coordinatetransformation/EpsgSelection'))
   },
 
   methods: {
