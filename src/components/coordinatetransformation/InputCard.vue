@@ -10,7 +10,9 @@
       />
     </section>
     <div class="input">
+      <!-- WIP stand alone component for all the stuf below -->
       <CordinateInputField/>
+
       <!-- <div class="first-input"> -->
       <span class="first-input" :class="{isDegreesInput: isDegrees, isMetresInput: !isDegrees}">
         <!-- Ombyt ikoner ved decimalgrader -->
@@ -30,7 +32,8 @@
           :stroke-width="0"
           class="arrow-icon arrow-icon-x-coordinate"
         />
-        <span class="chosen-coordinates">
+        <!-- COORDINATE INPUT IF DEGREES, MINUTES, SECONDS -->
+        <span class="coordinate-input">
           <input
             class="coordinates"
             :class="{
@@ -45,7 +48,8 @@
           <span class="unit" v-show="isDegrees">°N</span>
         <span class="unit" v-show="!isDegrees">m</span>
         </span>
-        <span class="chosen-coordinates" v-show="isDegrees && (minutesChecked || secondsChecked)">
+        <!-- COORDINATE INPUT IF DEGREES && MINUTES || SECONDS -->
+        <span class="coordinate-input" v-show="isDegrees && (minutesChecked || secondsChecked)">
           <input
             class="coordinates"
             :class="{degreesInput: degreesChecked, metresInput: minutesChecked, secondsInput: secondsChecked}"
@@ -55,7 +59,8 @@
           />
           <span class="degrees">'</span>
         </span>
-        <span class="chosen-coordinates" v-show="isDegrees && secondsChecked">
+        <!-- COORDINATE INPUT IF DEGREES AND -->
+        <span class="coordinate-input" v-show="isDegrees && secondsChecked">
           <input
             class="coordinates"
             :class="{degreesInput: degreesChecked, metresInput: minutesChecked, secondsInput: secondsChecked}"
@@ -86,7 +91,7 @@
           :stroke-width="0"
           class="arrow-icon"
         />
-        <span class="chosen-coordinates">
+        <span class="coordinate-input">
           <input
             :class="{degreesInput: degreesChecked, metresInput: minutesChecked, secondsInput: secondsChecked}"
             v-model=degrees[1]
@@ -96,7 +101,7 @@
           <span class="degrees" v-show="isDegrees">°E</span>
         <span class="degrees" v-show="!isDegrees">m</span>
         </span>
-        <span class="chosen-coordinates" v-show="isDegrees && (minutesChecked || secondsChecked)">
+        <span class="coordinate-input" v-show="isDegrees && (minutesChecked || secondsChecked)">
           <input
             :class="{degreesInput: degreesChecked, metresInput: minutesChecked, secondsInput: secondsChecked}"
             v-model=minutes[1]
@@ -105,7 +110,7 @@
           />
           <span class="degrees">'</span>
         </span>
-        <span class="chosen-coordinates" v-show="isDegrees && secondsChecked">
+        <span class="coordinate-input" v-show="isDegrees && secondsChecked">
           <input
             :class="{degreesInput: degreesChecked, metresInput: minutesChecked, secondsInput: secondsChecked}"
             v-model=seconds[1]
@@ -126,7 +131,7 @@
           :stroke-width="0"
           class="arrow-icon-z-coordinate"
         />
-        <span class="chosen-coordinates">
+        <span class="coordinate-input">
           <input
             :class="{degreesInput: true}"
             v-model=meters
@@ -229,12 +234,12 @@ export default {
   },
 
   methods: {
-
     /**
-     * When the user selects a new EPSG, a transformation of the inputted coordinates are run
+     * updates the input EPSG code and updates the UI if necessary
      * @param {string} epsg
      */
     onInputEpsgChanged (epsg) { // TODO: refactor this, pls
+      console.log('changed inputEPSG')
       // Decimal degrees (DD), eller DMS?
       if (epsg.v1_unit === 'degree') {
         // FIXME: this feels like doing the same thing two different places
@@ -252,7 +257,7 @@ export default {
         this.store.dispatch('trans/get', this.inputEPSG + '/' + epsg.srid + '/' + this.inputCoords[0] + ',' + this.inputCoords[1] + ',' + this.inputCoords[2])
           .then(() => {
             const transData = this.store.state.trans.data
-            console.log(`transData.message: ${transData.message}`)
+            console.log(`transData.message: ${transData.message}`) // TODO: this comes back as undefined?
             if (transData.message !== undefined) {
               this.error(transData.message)
               return
@@ -581,7 +586,7 @@ li:hover {
 ul {
   list-style-type: none;
 }
-.chosen-coordinates {
+.coordinate-input {
   border-bottom: var(--action) solid 1px;
   display: flex;
   flex: 1;

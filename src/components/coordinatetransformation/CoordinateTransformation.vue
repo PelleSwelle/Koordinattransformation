@@ -25,7 +25,7 @@
 
 <script>
 /**
- * CoordinateTransformation er foreældre til input- og outputkomponenterne samt barn til Map-komponentet.
+ * CoordinateTransformation er forældre til input- og outputkomponenterne samt barn til Map-komponentet.
  * Den er bindeled og står for koordinering mellem de tre komponenter:
  * Når brugeren klikker på kortet i Map, skal både Input og Output vide det.
  * Og når en EPSG-koden eller koordinatsættet ændres i Input, skal Output vide dette for at
@@ -70,6 +70,7 @@ export default {
     },
 
     onInputCoordsChanged (coords) {
+      console.log('changed input coordinates')
       this.inputCoords = coords
       this.$emit('input-coords-changed', coords)
     },
@@ -107,6 +108,7 @@ export default {
     const window = ref({ width: 0, height: 0 })
     const errorVisible = ref('')
     const error = ref('')
+
     return {
       inputCoords,
       colors,

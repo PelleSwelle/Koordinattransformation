@@ -67,6 +67,7 @@ export default {
   methods: {
     // Hvis inputkoordinaterne ændres, skal markøren også flyttes
     OnInputCoordsChanged (coords) {
+      console.log('changed input coordinates')
       if (this.inputEPSG !== this.mapProjection) {
         // { commit }, parameter
         this.store.dispatch('trans/get', this.inputEPSG + '/' + this.mapProjection + '/' + coords[0] + ',' + coords[1])
@@ -95,7 +96,7 @@ export default {
     // Holder øje med hvilken input EPSG-kode vi bruger i øjeblikket
     // TODO: bliver ikke kaldt
     OnInputEPSGChanged (epsg) {
-      console.log(`EPSG: ${epsg}`)
+      console.log(`onInputEPSGChanged: ${epsg}`)
       this.inputEPSG = epsg
     }
   },
@@ -106,6 +107,9 @@ export default {
     const worldEPSG = 'EPSG:3857'
     const greenlandEPSG = 'EPSG:3178'
 
+    const denmarkCenter = [587135, 6140617]
+    const greenlandCenter = [-5758833.2009, 9393681.2087]
+
     const store = useStore()
     const olView = ref({})
     const olMap = ref({})
@@ -113,8 +117,8 @@ export default {
     let mousePositionControl = ref({})
 
     const center = props.isDenmark
-      ? [587135, 6140617]
-      : [-5758833.2009, 9393681.2087]
+      ? denmarkCenter
+      : greenlandCenter
 
     const inputCoords = ref([center[0], center[1], 0])
     provide('mapMarkerInputCoords', inputCoords)
@@ -227,10 +231,6 @@ export default {
           olMap.value.on('click', e => {
             // get the coordinates of the mouse on the map
             const mouseCoordinates = olMap.value.getEventCoordinate(e.originalEvent)
-            // console.log(`mouse coordinates: ${mouseCoordinates}`)
-            console.log(`Map projection: ${mapProjection}, inputEPSG.value: ${inputEPSG.value}`)
-            // Transformér kun hvis EPSG-koderne er forskellige
-            console.log('trans/get', mapProjection + '/' + inputEPSG.value + '/' + mouseCoordinates[0] + ',' + mouseCoordinates[1])
             // Jeg tror, det er her den tripper op.
             if (mapProjection !== inputEPSG.value) {
               console.log(`map projection was ${inputEPSG.value}`)
@@ -257,7 +257,6 @@ export default {
             // Ellers er koordinaterne ens
             } else {
               const output = [parseFloat(mouseCoordinates[0]), parseFloat(mouseCoordinates[1]), inputCoords.value[2]]
-              console.log(`Output is ${output}`)
               inputCoords.value = output
             }
             const pinnedMarker = document.getElementById('pinned-marker')
