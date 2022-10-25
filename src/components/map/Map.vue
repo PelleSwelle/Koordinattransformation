@@ -55,11 +55,12 @@ export default {
   },
 
   props: {
+    /**
+     * determining whether the map shown should be Denmark or Greenland
+     */
     isDenmark: {
       type: Boolean,
-      default () {
-        return true
-      }
+      default () { return true }
     }
   },
 
@@ -67,6 +68,7 @@ export default {
     // Hvis inputkoordinaterne ændres, skal markøren også flyttes
     OnInputCoordsChanged (coords) {
       if (this.inputEPSG !== this.mapProjection) {
+        // { commit }, parameter
         this.store.dispatch('trans/get', this.inputEPSG + '/' + this.mapProjection + '/' + coords[0] + ',' + coords[1])
           .then(() => {
             const output = this.store.state.trans.data
@@ -91,24 +93,43 @@ export default {
     },
 
     // Holder øje med hvilken input EPSG-kode vi bruger i øjeblikket
+    // TODO: bliver ikke kaldt
     OnInputEPSGChanged (epsg) {
+      console.log(`EPSG: ${epsg}`)
       this.inputEPSG = epsg
     }
   },
 
   setup (props) {
+    // the EPSG codes
+    const europeEPSG = 'EPSG:25832'
+    const worldEPSG = 'EPSG:3857'
+    const greenlandEPSG = 'EPSG:3178'
+
     const store = useStore()
     const olView = ref({})
     const olMap = ref({})
+
     let mousePositionControl = ref({})
-    const center = props.isDenmark ? [587135, 6140617] : [-5758833.2009, 9393681.2087]
+
+    const center = props.isDenmark
+      ? [587135, 6140617]
+      : [-5758833.2009, 9393681.2087]
+
     const inputCoords = ref([center[0], center[1], 0])
     provide('mapMarkerInputCoords', inputCoords)
-    const colors = inject('themeColors')
-    epsg25832proj(proj4)
-    register(proj4)
-    const mapProjection = props.isDenmark ? 'EPSG:25832' : 'EPSG:3857'
-    const inputEPSG = ref(props.isDenmark ? 'EPSG:25832' : 'EPSG:3178')
+    const colors = inject('themeColors') // coimes from colors.js
+    epsg25832proj(proj4) // this comes from saul?
+    register(proj4) // proj4
+
+    // TODO: what are these two representing?
+    const mapProjection = props.isDenmark
+      ? europeEPSG
+      : worldEPSG // how the map is displayed?
+    const inputEPSG = ref(props.isDenmark
+      ? europeEPSG
+      : greenlandEPSG) // what the user enters in the box?
+
     const timeout = 500
     const error = ref('')
     const errorVisible = ref(false)
@@ -116,25 +137,28 @@ export default {
     provide('inputEPSG', inputEPSG.value)
 
     onMounted(() => {
+      /**
+       * where the mouse is on the map.
+       */
       mousePositionControl = new MousePosition({
-        coordinateFormat: createStringXY(4),
+        coordinateFormat: createStringXY(4), // 4 decimalpoints
         projection: mapProjection,
         className: 'custom-mouse-position',
         target: document.getElementById('mouse-position')
       })
 
+      /**
+       * the state of the map, including position, zoom value etc.
+       */
       olView.value = new OlView({
         center: center,
         zoom: 9,
         minZoom: 4,
         maxZoom: 100,
         extent: props.isDenmark
-          ? [
-              200_000, 5_900_000, 1_005_000, 6_620_000
-            ]
-          : [
-              -11_000_000, 7_000_000, 1_000_000, 21_000_000
-            ],
+          ? [200_000, 5_900_000, 1_005_000, 6_620_000]
+          : [-11_000_000, 7_000_000, 1_000_000, 21_000_000],
+
         showFullExtent: false,
         projection: mapProjection
       })
@@ -150,6 +174,7 @@ export default {
           })
           olMap.value = new OlMap({
             target: 'map',
+
             controls: defaultControls({
               zoom: false,
               attribution: false,
@@ -196,11 +221,20 @@ export default {
           }, timeout)
 
           // Lyt efter brugerklik på kortet med kortmarkøren og foretag evt. transformation
+          /**
+           * this should fill the input card input field. and potentially perform a transformation
+           */
           olMap.value.on('click', e => {
-            const mousePosition = olMap.value.getEventCoordinate(e.originalEvent)
+            // get the coordinates of the mouse on the map
+            const mouseCoordinates = olMap.value.getEventCoordinate(e.originalEvent)
+            // console.log(`mouse coordinates: ${mouseCoordinates}`)
+            console.log(`Map projection: ${mapProjection}, inputEPSG.value: ${inputEPSG.value}`)
             // Transformér kun hvis EPSG-koderne er forskellige
+            console.log('trans/get', mapProjection + '/' + inputEPSG.value + '/' + mouseCoordinates[0] + ',' + mouseCoordinates[1])
+            // Jeg tror, det er her den tripper op.
             if (mapProjection !== inputEPSG.value) {
-              store.dispatch('trans/get', mapProjection + '/' + inputEPSG.value + '/' + mousePosition[0] + ',' + mousePosition[1])
+              console.log(`map projection was ${inputEPSG.value}`)
+              store.dispatch('trans/get', mapProjection + '/' + inputEPSG.value + '/' + mouseCoordinates[0] + ',' + mouseCoordinates[1])
                 .then(() => {
                   const transformationData = store.state.trans.data
                   // Abort hvis fejl
@@ -222,7 +256,8 @@ export default {
                 })
             // Ellers er koordinaterne ens
             } else {
-              const output = [parseFloat(mousePosition[0]), parseFloat(mousePosition[1]), inputCoords.value[2]]
+              const output = [parseFloat(mouseCoordinates[0]), parseFloat(mouseCoordinates[1]), inputCoords.value[2]]
+              console.log(`Output is ${output}`)
               inputCoords.value = output
             }
             const pinnedMarker = document.getElementById('pinned-marker')
@@ -230,7 +265,7 @@ export default {
               element: pinnedMarker,
               positioning: 'center-center'
             })
-            overlay.setPosition([parseFloat(mousePosition[0]), parseFloat(mousePosition[1])])
+            overlay.setPosition([parseFloat(mouseCoordinates[0]), parseFloat(mouseCoordinates[1])])
             olMap.value.addOverlay(overlay)
           })
         })
@@ -255,6 +290,8 @@ export default {
 <style scoped>
 #mouse-position {
   display: none;
+  /* uncomment this to see coordinates displayed on screen */
+  /* display: block; */
 }
 #pinned-marker {
   position: absolute;

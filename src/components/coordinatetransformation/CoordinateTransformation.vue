@@ -60,10 +60,11 @@ export default {
 
   methods: {
     /**
-     * sets this.inputEPSG to the argument's srid
+     * sets this.inputEPSG to the argument's srid (the corresponding EPSG code)
      * @param {string} epsg
      */
     onInputEPSGChanged (epsg) {
+      console.table(epsg)
       this.inputEPSG = epsg.srid
       this.$emit('input-epsg-changed', epsg.srid)
     },
