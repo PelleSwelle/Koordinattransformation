@@ -6,8 +6,10 @@
     <section class="coordinate-selection-wrapper">
       <EpsgSelection :isOutput="false" @epsg-changed="inputEPSGChanged"/>
     </section>
+    <!-- the whole input area -->
     <div class="input">
-      <span class="first-input" :class="{isDegreesInput: isDegrees, isMetresInput: !isDegrees}">
+      <!-- first input -->
+      <span :class="{isDegreesInput: isDegrees, isMetresInput: !isDegrees}">
         <!-- Ombyt ikoner ved decimalgrader -->
         <Icon v-if="isDegrees"
           icon="ArrowIcon"
@@ -57,7 +59,8 @@
           <span class="degrees">"</span>
         </span>
       </span>
-      <span class="second-input" :class="{isDegreesInput: isDegrees, isMetresInput: !isDegrees}">
+      <!-- second input -->
+      <span :class="{isDegreesInput: isDegrees, isMetresInput: !isDegrees}">
         <!-- Ombyt ikoner ved decimalgrader -->
         <Icon v-if="isDegrees"
           icon="ArrowIcon"
@@ -104,7 +107,8 @@
           <span class="degrees">"</span>
         </span>
       </span>
-      <span class="third-input" :class="{isDegreesInput: isDegrees, isMetresInput: !isDegrees}" v-show = "is3D">
+      <!-- third input -->
+      <span :class="{isDegreesInput: isDegrees, isMetresInput: !isDegrees}" v-show = "is3D">
         <Icon
           icon="ArrowIcon"
           :width="2"
