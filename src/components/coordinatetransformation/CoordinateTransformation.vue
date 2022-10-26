@@ -60,14 +60,17 @@ export default {
   },
   methods: {
     inputEPSGChanged (code) {
+      console.log('input EPSG changed')
       this.inputEPSG = code.srid
       this.$emit('input-epsg-changed', code.srid)
     },
     inputCoordsChanged (coords) {
+      console.log('input coords changed')
       this.inputCoords = coords
       this.$emit('input-coords-changed', coords)
     },
     is3DChanged (state) {
+      console.log('is 3D changed')
       this.is3D = state
     },
     errorOccurred (state, err) {

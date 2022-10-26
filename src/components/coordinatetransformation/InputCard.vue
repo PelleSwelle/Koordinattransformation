@@ -1,15 +1,25 @@
 <template>
-  <section class="input-coordinate">
+  <section>
     <div class="title-bar">
       <h3>Input</h3>
     </div>
     <section class="coordinate-selection-wrapper">
       <EpsgSelection :isOutput="false" @epsg-changed="inputEPSGChanged"/>
     </section>
+
     <!-- the whole input area -->
+    <!-- TODO: style this with flex box. if degrees, one line, if meters 3 lines -->
     <div class="input">
+      <div class="inputComponents">
+        <CoordinateInputField :value=degrees[0] :unit="unitFirst" :direction="firstDirection" arrowDir="0"/>
+        <CoordinateInputField :value=degrees[1] :unit="unitSecond" :direction="secondDirection" arrowDir="1"/>
+        <!-- <CoordinateInputField v-model=degrees[2] :unit="unitThird" :direction="thirdDirection" arrowDir="2"/> -->
+      </div>
       <!-- first input -->
-      <span :class="{isDegreesInput: isDegrees, isMetresInput: !isDegrees}">
+      <!-- TODO: this is doing the same thing twice -->
+      <span :class="{
+        isDegreesInput: isDegrees,
+        isMetresInput: !isDegrees}">
         <!-- Ombyt ikoner ved decimalgrader -->
         <Icon v-if="isDegrees"
           icon="ArrowIcon"
@@ -27,7 +37,7 @@
           :stroke-width="0"
           class="arrow-icon arrow-icon-x-coordinate"
         />
-        <span class="chosen-coordinates" :class="{degreesInput: isDegrees}">
+        <span class="coordinates-input" :class="{degreesInput: isDegrees}">
           <input
             class="coordinates"
             :class="{degreesInput: degreesChecked, metresInput: minutesChecked, secondsInput: secondsChecked}"
@@ -38,7 +48,7 @@
           <span class="unit" v-show="isDegrees">°N</span>
           <span class="unit" v-show="!isDegrees">m</span>
         </span>
-        <span class="chosen-coordinates" :class="{degreesInput: isDegrees}" v-show="isDegrees && (minutesChecked || secondsChecked)">
+        <span class="coordinates-input" :class="{degreesInput: isDegrees}" v-show="isDegrees && (minutesChecked || secondsChecked)">
           <input
             class="coordinates"
             :class="{degreesInput: degreesChecked, metresInput: minutesChecked, secondsInput: secondsChecked}"
@@ -48,7 +58,7 @@
           />
           <span class="degrees">'</span>
         </span>
-        <span class="chosen-coordinates" :class="{degreesInput: isDegrees}" v-show="isDegrees && secondsChecked">
+        <span class="coordinates-input" :class="{degreesInput: isDegrees}" v-show="isDegrees && secondsChecked">
           <input
             class="coordinates"
             :class="{degreesInput: degreesChecked, metresInput: minutesChecked, secondsInput: secondsChecked}"
@@ -57,74 +67,6 @@
             step="0.0001"
           />
           <span class="degrees">"</span>
-        </span>
-      </span>
-      <!-- second input -->
-      <span :class="{isDegreesInput: isDegrees, isMetresInput: !isDegrees}">
-        <!-- Ombyt ikoner ved decimalgrader -->
-        <Icon v-if="isDegrees"
-          icon="ArrowIcon"
-          :width="2"
-          :height="2"
-          :color="colors.turquoise"
-          :stroke-width="0"
-          class="arrow-icon arrow-icon-x-coordinate"
-        />
-        <Icon v-else
-          icon="ArrowIcon"
-          :width="2"
-          :height="2"
-          :color="colors.turquoise"
-          :stroke-width="0"
-          class="arrow-icon"
-        />
-        <span class="chosen-coordinates">
-          <input
-            :class="{degreesInput: degreesChecked, metresInput: minutesChecked, secondsInput: secondsChecked}"
-            v-model=degrees[1]
-            type="number"
-            step="0.0001"
-          />
-          <span class="degrees" v-show="isDegrees">°E</span>
-        <span class="degrees" v-show="!isDegrees">m</span>
-        </span>
-        <span class="chosen-coordinates" v-show="isDegrees && (minutesChecked || secondsChecked)">
-          <input
-            :class="{degreesInput: degreesChecked, metresInput: minutesChecked, secondsInput: secondsChecked}"
-            v-model=minutes[1]
-            type="number"
-            step="0.0001"
-          />
-          <span class="degrees">'</span>
-        </span>
-        <span class="chosen-coordinates" v-show="isDegrees && secondsChecked">
-          <input
-            :class="{degreesInput: degreesChecked, metresInput: minutesChecked, secondsInput: secondsChecked}"
-            v-model=seconds[1]
-            type="number"
-            step="0.0001"
-          />
-          <span class="degrees">"</span>
-        </span>
-      </span>
-      <!-- third input -->
-      <span :class="{isDegreesInput: isDegrees, isMetresInput: !isDegrees}" v-show = "is3D">
-        <Icon
-          icon="ArrowIcon"
-          :width="2"
-          :height="2"
-          :color="colors.turquoise"
-          :stroke-width="0"
-          class="arrow-icon-z-coordinate"
-        />
-        <span class="chosen-coordinates">
-        <input
-          :class="{degreesInput: true}"
-          v-model=meters
-          type="number"
-          step="0.0001"
-        />
-        <span class="degrees">m</span>
         </span>
       </span>
     </div>
@@ -215,53 +157,58 @@ export default {
   name: 'InputCoordinates',
 
   components: {
-    EpsgSelection: defineAsyncComponent(() => import('@/components/coordinatetransformation/EpsgSelection'))
+    EpsgSelection: defineAsyncComponent(() => import('@/components/coordinatetransformation/EpsgSelection')),
+    CoordinateInputField: defineAsyncComponent(() => import('./CoordinateInputField'))
   },
 
   methods: {
     // UTranformation af inputkoordinaterne, når brugeren vælger ny EPSG
-    inputEPSGChanged (code) {
+    inputEPSGChanged (epsgCode) {
       // Decimal degrees (DD), eller DMS?
-      if (code.v1_unit === 'degree') {
-        this.isDegrees = true
+      if (epsgCode.v1_unit === 'degree') {
+        this.epsgIsDegrees = true
         this.checkDegrees()
       } else {
-        this.isDegrees = false
+        this.epsgIsDegrees = false
         this.disableRadioButtons()
       }
       // 3D eller 2D?
-      this.is3D = code.v3 !== null
+      this.is3D = epsgCode.v3 !== null
+
       if (this.is3D) {
-        this.store.dispatch('trans/get', this.inputEPSG + '/' + code.srid + '/' + this.inputCoords[0] + ',' + this.inputCoords[1] + ',' + this.inputCoords[2])
+        // gets the epsg data from the store
+        this.store.dispatch('trans/get', this.inputEPSG + '/' + epsgCode.srid + '/' + this.mapMarkerValues[0] + ',' + this.mapMarkerValues[1] + ',' + this.mapMarkerValues[2])
           .then(() => {
             const output = this.store.state.trans.data
             if (output.message !== undefined) {
               this.error(output.message)
               return
             }
-            this.inputEPSG = code.srid
-            this.inputCoords[0] = output.v1
-            this.inputCoords[1] = output.v2
-            this.inputCoords[2] = output.v3
+            this.inputEPSG = epsgCode.srid
+            this.mapMarkerValues[0] = output.v1
+            this.mapMarkerValues[1] = output.v2
+            this.mapMarkerValues[2] = output.v3
             // Vi formaterer inputtet, så det ser pænt ud,
             // og gør CoordinateTransformation opmærksom på ændringen
             // så den kan fortælle Map samt Output om den nye EPSG-kode.
-            this.setInput()
-            this.$emit('input-epsg-changed', code)
+            this.updateInputFields()
+            this.$emit('input-epsg-changed', epsgCode)
           })
       } else {
-        this.store.dispatch('trans/get', this.inputEPSG + '/' + code.srid + '/' + this.inputCoords[0] + ',' + this.inputCoords[1])
+        this.store.dispatch('trans/get', this.inputEPSG + '/' + epsgCode.srid + '/' + this.mapMarkerValues[0] + ',' + this.mapMarkerValues[1])
           .then(() => {
-            const output = this.store.state.trans.data
-            if (output.message !== undefined) {
-              this.error(output.message)
+            const transformationOutput = this.store.state.trans.data
+
+            if (transformationOutput.message !== undefined) {
+              this.error(transformationOutput.message)
               return
             }
-            this.inputEPSG = code.srid
-            this.inputCoords[0] = output.v1
-            this.inputCoords[1] = output.v2
-            this.$emit('input-epsg-changed', code)
-            this.setInput()
+
+            this.inputEPSG = epsgCode.srid
+            this.mapMarkerValues[0] = transformationOutput.v1
+            this.mapMarkerValues[1] = transformationOutput.v2
+            this.$emit('input-epsg-changed', epsgCode)
+            this.updateInputFields()
           })
       }
     },
@@ -278,7 +225,7 @@ export default {
         this.degreesChecked = true
         this.minutesChecked = false
         this.secondsChecked = false
-        this.setInput()
+        this.updateInputFields()
       }
     },
 
@@ -287,7 +234,7 @@ export default {
         this.degreesChecked = false
         this.minutesChecked = true
         this.secondsChecked = false
-        this.setInput()
+        this.updateInputFields()
       }
     },
 
@@ -296,17 +243,22 @@ export default {
         this.degreesChecked = false
         this.minutesChecked = false
         this.secondsChecked = true
-        this.setInput()
+        this.updateInputFields()
       }
     }
   },
 
   setup (_props, { emit }) {
+    // provided from map
     const mapMarkerInputCoords = inject('mapMarkerInputCoords')
-    const inputCoords = ref(mapMarkerInputCoords.value)
+    const mapMarkerValues = ref(mapMarkerInputCoords.value)
+
     const inputEPSG = ref('')
     const colors = inject('themeColors')
     const store = useStore()
+    const firstDirection = 'first'
+    const secondDirection = 'second'
+    const thirdDirection = 'third'
     // Formatknapperne
     const degreesChecked = ref(false)
     const minutesChecked = ref(false)
@@ -317,31 +269,41 @@ export default {
     const seconds = ref([0, 0])
     const meters = ref(0)
     const is3D = ref(true)
+    // TODO: where does this get set
     const isDegrees = ref(false)
     const selected = ref('')
     // Smuksering af inputkoordinaterne i de tre til syv tastefelter
-    const setInput = () => {
+    /**
+     * setting the input fields
+     */
+    const updateInputFields = () => {
+      // if not degrees
       if (!isDegrees.value || degreesChecked.value) {
-        const deg0 = parseFloat(inputCoords.value[0].toFixed(4))
-        const deg1 = parseFloat(inputCoords.value[1].toFixed(4))
+        // values to be filled into the input fields
+        const deg0 = parseFloat(mapMarkerValues.value[0].toFixed(4))
+        const deg1 = parseFloat(mapMarkerValues.value[1].toFixed(4))
+        // filling into the input fields
         degrees.value[0] = deg0
         degrees.value[1] = deg1
+        console.log(`isDegrees.value: ${isDegrees.value}`)
       } else if (minutesChecked.value) {
-        const deg0 = Math.floor(inputCoords.value[0])
-        const deg1 = Math.floor(inputCoords.value[1])
-        const min0 = parseFloat(((inputCoords.value[0] - deg0) * 60).toFixed(4))
-        const min1 = parseFloat(((inputCoords.value[1] - deg1) * 60).toFixed(4))
+        console.log(`isDegrees.value: ${isDegrees.value}`)
+        const deg0 = Math.floor(mapMarkerValues.value[0])
+        const deg1 = Math.floor(mapMarkerValues.value[1])
+        const min0 = parseFloat(((mapMarkerValues.value[0] - deg0) * 60).toFixed(4))
+        const min1 = parseFloat(((mapMarkerValues.value[1] - deg1) * 60).toFixed(4))
         degrees.value[0] = deg0
         degrees.value[1] = deg1
         minutes.value[0] = min0
         minutes.value[1] = min1
       } else {
-        const deg0 = Math.floor(inputCoords.value[0])
-        const deg1 = Math.floor(inputCoords.value[1])
-        const min0 = Math.floor((inputCoords.value[0] - deg0) * 60)
-        const min1 = Math.floor((inputCoords.value[1] - deg1) * 60)
-        const sec0 = parseFloat(((inputCoords.value[0] - deg0 - min0 / 60) * 3600).toFixed(4))
-        const sec1 = parseFloat(((inputCoords.value[1] - deg1 - min1 / 60) * 3600).toFixed(4))
+        console.log(`isDegrees.value: ${isDegrees.value}`)
+        const deg0 = Math.floor(mapMarkerValues.value[0])
+        const deg1 = Math.floor(mapMarkerValues.value[1])
+        const min0 = Math.floor((mapMarkerValues.value[0] - deg0) * 60)
+        const min1 = Math.floor((mapMarkerValues.value[1] - deg1) * 60)
+        const sec0 = parseFloat(((mapMarkerValues.value[0] - deg0 - min0 / 60) * 3600).toFixed(4))
+        const sec1 = parseFloat(((mapMarkerValues.value[1] - deg1 - min1 / 60) * 3600).toFixed(4))
         degrees.value[0] = deg0
         degrees.value[1] = deg1
         minutes.value[0] = min0
@@ -381,11 +343,11 @@ export default {
                     error(output.message)
                     return
                   }
-                  inputCoords.value[0] = output.v1
-                  inputCoords.value[1] = output.v2
-                  inputCoords.value[2] = output.v3
-                  setInput()
-                  emit('input-coords-changed', [inputCoords.value[0], inputCoords.value[1], inputCoords.value[2]])
+                  mapMarkerValues.value[0] = output.v1
+                  mapMarkerValues.value[1] = output.v2
+                  mapMarkerValues.value[2] = output.v3
+                  // setInput()
+                  emit('input-coords-changed', [mapMarkerValues.value[0], mapMarkerValues.value[1], mapMarkerValues.value[2]])
                 })
               } else {
                 store.dispatch('trans/get', 'EPSG:4258/' + inputEPSG.value + '/' + coords[1] + ',' + coords[0]).then(() => {
@@ -394,23 +356,23 @@ export default {
                     error(output.message)
                     return
                   }
-                  inputCoords.value[0] = output.v1
-                  inputCoords.value[1] = output.v2
-                  setInput()
-                  emit('input-coords-changed', [inputCoords.value[0], inputCoords.value[1], inputCoords.value[2]])
+                  mapMarkerValues.value[0] = output.v1
+                  mapMarkerValues.value[1] = output.v2
+                  // setInput()
+                  emit('input-coords-changed', [mapMarkerValues.value[0], mapMarkerValues.value[1], mapMarkerValues.value[2]])
                 })
               }
             })
         }
       })
     })
-    setInput()
+    updateInputFields()
 
     // Hold øje med kortmarkørens placering,
     // så inputkoordinaterne kan opdateres.
     watch(mapMarkerInputCoords, () => {
-      inputCoords.value = mapMarkerInputCoords.value
-      setInput()
+      mapMarkerValues.value = mapMarkerInputCoords.value
+      updateInputFields()
     })
 
     // Hold øje med de tastefelterne til inputkoordinater,
@@ -433,31 +395,31 @@ export default {
         v1 += seconds.value[0] / 3600
         v2 += seconds.value[1] / 3600
       }
-      inputCoords.value = [v1, v2, meters.value]
+      mapMarkerValues.value = [v1, v2, meters.value]
     })
 
     // Højdeparameteren til 3D-projektering er særskildt.
     watch(meters, () => {
       // meters.value -= 0
-      inputCoords.value = [inputCoords.value[0], inputCoords.value[1], meters.value]
+      mapMarkerValues.value = [mapMarkerValues.value[0], mapMarkerValues.value[1], meters.value]
     })
 
     // Gør CoordinateTransformation opmærksom på ændringer i inputkoordinaterne,
     // og om hvorvidt input EPGS-koden er i 3D eller 2D.
     onUpdated(() => {
       emit('is-3d-changed', is3D.value)
-      emit('input-coords-changed', inputCoords.value)
+      emit('input-coords-changed', mapMarkerValues.value)
     })
 
     return {
-      inputCoords,
+      mapMarkerValues,
       colors,
       store,
       inputEPSG,
       minutesChecked,
       secondsChecked,
       degreesChecked,
-      setInput,
+      updateInputFields,
       degrees,
       minutes,
       seconds,
@@ -465,7 +427,10 @@ export default {
       isDegrees,
       meters,
       error,
-      selected
+      selected,
+      firstDirection,
+      secondDirection,
+      thirdDirection
     }
   }
 }
@@ -476,6 +441,11 @@ export default {
   padding: 0;
   margin: 0;
   box-sizing: border-box;
+}
+
+.inputComponents {
+  display: flex;
+  flex-direction: row;
 }
 .coordinate-selection-wrapper {
   margin: 1rem 0;
@@ -509,7 +479,7 @@ li:hover {
 ul {
   list-style-type: none;
 }
-.chosen-coordinates {
+.coordinates-input {
   border-bottom: var(--action) solid 1px;
   display: inline-flex;
   flex: 1;
@@ -533,9 +503,6 @@ input {
 }
 .arrow-icon-z-coordinate {
   transform: rotate(45deg);
-}
-.arrow-icon-x-coordinate {
-  transform: rotate(90deg);
 }
 .searchbar {
   display: inline-flex;

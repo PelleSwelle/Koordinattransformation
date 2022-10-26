@@ -9,8 +9,8 @@
 /**
  * Familietræet af forældrekomponenter og deres børn er som følgende:
  * Map -> CoordinateTransformation
- * CoordinateTransformation -> InputCoordinates -> CoordinateSelection
- * CoordinateTransformation -> OutputCoordinates -> CoordinateSelection
+ * CoordinateTransformation -> InputCard -> EpsgSelection
+ * CoordinateTransformation -> OutputCard -> EpsgSelection
  * CoordinateTransformation -> MenuCloser
  */
 import { onErrorCaptured, ref } from 'vue'
