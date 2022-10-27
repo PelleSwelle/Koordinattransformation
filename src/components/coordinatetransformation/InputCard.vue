@@ -4,15 +4,15 @@
       <h3>Input</h3>
     </div>
     <section class="coordinate-selection-wrapper">
-      <EpsgSelection :isOutput="false" @epsg-changed="onEpsgChanged"/>
+      <EpsgSelection :isOutput="false" @epsg-changed="updateInputFields"/>
     </section>
 
     <!-- the whole input area -->
     <!-- TODO: style this with flex box. if degrees, one line, if meters 3 lines -->
     <div class="input">
       <div class="inputComponents">
-        <CoordinateInputField :isDegrees=epsgIsDegrees :value=degrees[0] :unit="unitFirst" :direction="firstDirection" arrowDir="0"/>
-        <CoordinateInputField :isDegrees=epsgIsDegrees :value=degrees[1] :unit="unitSecond" :direction="secondDirection" arrowDir="1"/>
+        <CoordinateInputField :isDegrees=epsgIsDegrees :value=inputCoordinates[0] :unit="unitFirst" :direction="firstDirection" arrowDir="0"/>
+        <CoordinateInputField :isDegrees=epsgIsDegrees :value=inputCoordinates[1] :unit="unitSecond" :direction="secondDirection" arrowDir="1"/>
         <!-- <CoordinateInputField v-model=degrees[2] :unit="unitThird" :direction="thirdDirection" arrowDir="2"/> -->
       </div>
       <!-- first input -->
@@ -44,7 +44,7 @@
             :class="{degreesInput: degreesChecked, metresInput: minutesChecked, secondsInput: secondsChecked}"
             type="number"
             step="0.0001"
-            v-model=degrees[0]
+            v-model=inputCoordinates[0]
           />
           <span class="unit" v-show="epsgIsDegrees">°N</span>
           <span class="unit" v-show="!epsgIsDegrees">m</span>
@@ -53,7 +53,7 @@
           <input
             class="coordinates"
             :class="{degreesInput: degreesChecked, metresInput: minutesChecked, secondsInput: secondsChecked}"
-            v-model=minutes[0]
+            v-model=inputMinutes[0]
             type="number"
             step="0.0001"
           />
@@ -63,7 +63,7 @@
           <input
             class="coordinates"
             :class="{degreesInput: degreesChecked, metresInput: minutesChecked, secondsInput: secondsChecked}"
-            v-model=seconds[0]
+            v-model=inputSeconds[0]
             type="number"
             step="0.0001"
           />
@@ -165,11 +165,12 @@ export default {
   methods: {
     // UTranformation af inputkoordinaterne, når brugeren vælger ny EPSG
     inputEPSGChanged (epsgCode) {
+      console.table(epsgCode)
       // Decimal degrees (DD), eller DMS?
       if (epsgCode.v1_unit === 'degree') {
         this.epsgIsDegrees = true
         this.checkDegrees()
-      } else if (epsgCode.v1_unit === 'meter') {
+      } else {
         console.log('ESPG code is in meters')
         this.epsgIsDegrees = false
         this.disableRadioButtons()
@@ -266,57 +267,93 @@ export default {
     const minutesChecked = ref(false)
     const secondsChecked = ref(false)
     // DMS
-    const inputValues = ref([0, 0])
-    const minutes = ref([0, 0])
-    const seconds = ref([0, 0])
+    const inputCoordinates = ref([0, 0])
+    const inputMinutes = ref([0, 0])
+    const inputSeconds = ref([0, 0])
     const meters = ref(0)
     const is3D = ref(true)
     // TODO: where does this get set
     const epsgIsDegrees = ref(false)
     const selected = ref('')
+
+    /**
+     * method run when EpsgSelection registers a change
+     * calls updateInputFields
+     */
+    // const onEpsgChanged = () => {
+    //   console.log('changed EPSG code, updating input fields')
+
+    //   // TODO: wrap this in if else
+    //   updateInputFields()
+    // }
+
+    /**
+     * updates the two first input fields
+     * @param {[number, number]} values
+     */
+    // const updateDegrees = (values) => {
+    //   const deg0 = parseFloat(values.value[0].toFixed(4))
+    //   const deg1 = parseFloat(values.value[1].toFixed(4))
+
+    //   // filling into the input fields
+    //   inputCoordinates.value[0] = deg0
+    //   inputCoordinates.value[1] = deg1
+    // }
+    /**
+     * updates the minutes input
+     * @param {[number, number]} values
+     */
+    // const updateMinutes = (values) => {
+    //   // TODO: this could be done from updateDegrees()
+    //   const deg0 = Math.floor(mapMarkerValues.value[0])
+    //   const deg1 = Math.floor(mapMarkerValues.value[1])
+    //   const min0 = parseFloat(((mapMarkerValues.value[0] - deg0) * 60).toFixed(4))
+    //   const min1 = parseFloat(((mapMarkerValues.value[1] - deg1) * 60).toFixed(4))
+    //   inputCoordinates.value[0] = deg0
+    //   inputCoordinates.value[1] = deg1
+    //   inputMinutes.value[0] = min0
+    //   inputMinutes.value[1] = min1
+    // }
+
     // Smuksering af inputkoordinaterne i de tre til syv tastefelter
     /**
      * setting the input fields
      */
-    const onEpsgChanged = () => {
-      console.log('changed epsg code, updating input fields')
-
-      updateInputFields()
-    }
     const updateInputFields = () => {
+      console.log(`isDegrees.value: ${epsgIsDegrees.value}`)
       // if not degrees
       if (!epsgIsDegrees.value || degreesChecked.value) {
         // values to be filled into the input fields
+        // updateDegrees(mapMarkerValues)
         const deg0 = parseFloat(mapMarkerValues.value[0].toFixed(4))
         const deg1 = parseFloat(mapMarkerValues.value[1].toFixed(4))
+
         // filling into the input fields
-        inputValues.value[0] = deg0
-        inputValues.value[1] = deg1
-        console.log(`isDegrees.value: ${epsgIsDegrees.value}`)
+        inputCoordinates.value[0] = deg0
+        inputCoordinates.value[1] = deg1
       } else if (minutesChecked.value) {
-        console.log(`isDegrees.value: ${epsgIsDegrees.value}`)
+        // updateMinutes(mapMarkerValues)
         const deg0 = Math.floor(mapMarkerValues.value[0])
         const deg1 = Math.floor(mapMarkerValues.value[1])
         const min0 = parseFloat(((mapMarkerValues.value[0] - deg0) * 60).toFixed(4))
         const min1 = parseFloat(((mapMarkerValues.value[1] - deg1) * 60).toFixed(4))
-        inputValues.value[0] = deg0
-        inputValues.value[1] = deg1
-        minutes.value[0] = min0
-        minutes.value[1] = min1
+        inputCoordinates.value[0] = deg0
+        inputCoordinates.value[1] = deg1
+        inputMinutes.value[0] = min0
+        inputMinutes.value[1] = min1
       } else {
-        console.log(`isDegrees.value: ${epsgIsDegrees.value}`)
         const deg0 = Math.floor(mapMarkerValues.value[0])
         const deg1 = Math.floor(mapMarkerValues.value[1])
         const min0 = Math.floor((mapMarkerValues.value[0] - deg0) * 60)
         const min1 = Math.floor((mapMarkerValues.value[1] - deg1) * 60)
         const sec0 = parseFloat(((mapMarkerValues.value[0] - deg0 - min0 / 60) * 3600).toFixed(4))
         const sec1 = parseFloat(((mapMarkerValues.value[1] - deg1 - min1 / 60) * 3600).toFixed(4))
-        inputValues.value[0] = deg0
-        inputValues.value[1] = deg1
-        minutes.value[0] = min0
-        minutes.value[1] = min1
-        seconds.value[0] = sec0
-        seconds.value[1] = sec1
+        inputCoordinates.value[0] = deg0
+        inputCoordinates.value[1] = deg1
+        inputMinutes.value[0] = min0
+        inputMinutes.value[1] = min1
+        inputSeconds.value[0] = sec0
+        inputSeconds.value[1] = sec1
       }
     }
 
@@ -384,23 +421,23 @@ export default {
 
     // Hold øje med de tastefelterne til inputkoordinater,
     // skulle brugeren vælge at indtaste koordinaterne manuelt.
-    watch([inputValues.value, minutes.value, seconds.value], () => {
+    watch([inputCoordinates.value, inputMinutes.value, inputSeconds.value], () => {
       // Sørg for at lade koordinaterne være tal og aldrig bogstaver
       // degrees.value[0] -= 0
       // degrees.value[1] -= 0
-      let v1 = inputValues.value[0]
-      let v2 = inputValues.value[1]
+      let v1 = inputCoordinates.value[0]
+      let v2 = inputCoordinates.value[1]
       if (minutesChecked.value || secondsChecked.value) {
         // minutes.value[0] -= 0
         // minutes.value[1] -= 0
-        v1 += minutes.value[0] / 60
-        v2 += minutes.value[1] / 60
+        v1 += inputMinutes.value[0] / 60
+        v2 += inputMinutes.value[1] / 60
       }
       if (secondsChecked.value) {
         // seconds.value[0] -= 0
         // seconds.value[1] -= 0
-        v1 += seconds.value[0] / 3600
-        v2 += seconds.value[1] / 3600
+        v1 += inputSeconds.value[0] / 3600
+        v2 += inputSeconds.value[1] / 3600
       }
       mapMarkerValues.value = [v1, v2, meters.value]
     })
@@ -427,10 +464,9 @@ export default {
       secondsChecked,
       degreesChecked,
       updateInputFields,
-      onEpsgChanged,
-      degrees: inputValues,
-      minutes,
-      seconds,
+      inputCoordinates,
+      inputMinutes,
+      inputSeconds,
       is3D,
       epsgIsDegrees,
       meters,
