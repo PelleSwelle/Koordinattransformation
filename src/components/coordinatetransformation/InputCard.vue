@@ -11,11 +11,12 @@
     <!-- TODO: style this with flex box. if degrees, one line, if meters 3 lines -->
     <div class="input">
       <div class="inputComponents">
-        <CoordinateInputField :value=degrees[0] :unit="unitFirst" :direction="firstDirection" arrowDir="0"/>
-        <CoordinateInputField :value=degrees[1] :unit="unitSecond" :direction="secondDirection" arrowDir="1"/>
+        <CoordinateInputField :isDegrees=isDegrees :value=degrees[0] :unit="unitFirst" :direction="firstDirection" arrowDir="0"/>
+        <CoordinateInputField :isDegrees=isDegrees :value=degrees[1] :unit="unitSecond" :direction="secondDirection" arrowDir="1"/>
         <!-- <CoordinateInputField v-model=degrees[2] :unit="unitThird" :direction="thirdDirection" arrowDir="2"/> -->
       </div>
       <!-- first input -->
+      <!-- isDegrees bliver brugt på hele tingen, ikonetinputWrapperen, unit -->
       <!-- TODO: this is doing the same thing twice -->
       <span :class="{
         isDegreesInput: isDegrees,
@@ -168,7 +169,8 @@ export default {
       if (epsgCode.v1_unit === 'degree') {
         this.epsgIsDegrees = true
         this.checkDegrees()
-      } else {
+      } else if (epsgCode.v1_unit === 'meter') {
+        console.log('ESPG code is in meters')
         this.epsgIsDegrees = false
         this.disableRadioButtons()
       }

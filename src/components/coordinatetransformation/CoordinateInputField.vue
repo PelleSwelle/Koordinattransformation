@@ -33,7 +33,7 @@
         <span class="units">
 
             <!-- if in degrees -->
-            <span v-if="isDegrees">°{{direction}}</span>
+            <span v-if="props.isDegrees">°{{direction}}</span>
 
             <!-- if in meters -->
             <span v-else>m</span>
@@ -48,7 +48,7 @@ import { inject, defineProps } from 'vue'
 
 const colors = inject('themeColors')
 
-const isDegrees = true
+// const isDegrees = true
 
 // const direction = ref('north')
 const props = defineProps({
