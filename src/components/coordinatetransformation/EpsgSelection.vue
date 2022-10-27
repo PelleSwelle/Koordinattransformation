@@ -42,6 +42,7 @@
     <section v-show="inputActive" class="crs-selection">
       <article class="selection-list" :class="{ isOutput: isOutput }">
         <ul v-for="CRS in filteredCRS" :key="CRS">
+          <!-- TODO: move the click to a function -->
           <li
             @click="
               chosenInput = CRS.title_short;
@@ -61,14 +62,14 @@
 
 <script>
 /**
- * CoordinateSelection er drop-down menuen af EPSG-koder i både input- og outputkomponenterne
+ * EpsgSelection er drop-down menuen af EPSG-koder i både input- og outputkomponenterne
  */
 import { onMounted, ref, inject } from 'vue'
 import { useStore } from 'vuex'
 import { useRoute } from 'vue-router'
 
 export default {
-  name: 'CoordinateSelectionComponent',
+  name: 'EpsgSelectionComponent',
   props: {
     // Er vi i input- eller outputkomponentet?
     isOutput: {
@@ -107,9 +108,13 @@ export default {
         makeCRSList()
       })
     })
+
+    /**
+     * generates the list of EPSG codes
+     */
     const makeCRSList = async () => {
       const tempCRS = []
-      // Der er forskellige lister for Danmark og Grøndland
+      // Der er forskellige lister for Danmark og Grønland
       if (route.name === 'Denmark' && crs.value.length !== 0) {
         for (let i = 0, iEnd = crs.value.DK.length; i < iEnd; ++i) {
           await store

@@ -4,7 +4,7 @@
       <CoordinateTransformation
         @input-epsg-changed="inputEPSGChanged"
         @input-coords-changed="inputCoordsChanged"
-        :inputCoords=inputCoords
+        :inputCoords=transformationInputCoords
         id="coordinate-transform"
         :mapError="error"
         :mapErrorVisible="errorVisible"
@@ -97,18 +97,36 @@ export default {
   },
 
   setup (props) {
+    // EPSG codes
+    const denmarkEPSG = 'EPSG:25832'
+    const worldPseudoMercatorEPSG = 'EPSG:3857'
+    const greenlandEPSG = 'EPSG:4326'
+
+    // the center of each map
+    const denmarkCenter = [587135, 6140617]
+    const greenlandCenter = [-5758833.2009, 9393681.2087]
+
     const store = useStore()
+
     const olView = ref({})
     const olMap = ref({})
+
     let mousePositionControl = ref({})
-    const center = props.isDenmark ? [587135, 6140617] : [-5758833.2009, 9393681.2087]
-    const inputCoords = ref([center[0], center[1], 0])
-    provide('mapMarkerInputCoords', inputCoords)
+
+    // set the center coordinates to the corresponding map.
+    const center = props.isDenmark
+      ? denmarkCenter
+      : greenlandCenter
+
+    const transformationInputCoords = ref([center[0], center[1], 0])
+    provide('mapMarkerInputCoords', transformationInputCoords)
     const colors = inject('themeColors')
     epsg25832proj(proj4)
     register(proj4)
-    const mapProjection = props.isDenmark ? 'EPSG:25832' : 'EPSG:3857'
-    const inputEPSG = ref(props.isDenmark ? 'EPSG:25832' : 'EPSG:3178')
+
+    const mapProjection = props.isDenmark ? denmarkEPSG : worldPseudoMercatorEPSG
+    const inputEPSG = ref(props.isDenmark ? denmarkEPSG : greenlandEPSG)
+
     const timeout = 500
     const error = ref('')
     const errorVisible = ref(false)
@@ -116,6 +134,7 @@ export default {
     provide('inputEPSG', inputEPSG.value)
 
     onMounted(() => {
+      // OL control
       mousePositionControl = new MousePosition({
         coordinateFormat: createStringXY(4),
         projection: mapProjection,
@@ -169,18 +188,12 @@ export default {
 
             view: olView.value,
 
+            // if Denmark, use our own WMTS service, if Greenland, use OSM map
             layers: props.isDenmark
-              ? [
-                  new TileLayer({
-                    opacity: 1,
-                    source: new WMTS(options)
-                  })]
-              : [
-                  new TileLayer({
-                    source: new OSM()
-                  })
-                ]
+              ? [new TileLayer({ opacity: 1, source: new WMTS(options) })]
+              : [new TileLayer({ source: new OSM() })]
           })
+
           // Kortmarkøren skal sættes, når applikationen første gang er loadet
           setTimeout(() => {
             const pinnedMarker = document.getElementById('pinned-marker')
@@ -196,15 +209,16 @@ export default {
 
           // Lyt efter brugerklik på kortet med kortmarkøren og foretag evt. transformation
           olMap.value.on('click', e => {
-            const mpos = olMap.value.getEventCoordinate(e.originalEvent)
+            const mousePos = olMap.value.getEventCoordinate(e.originalEvent)
+
             // Transformér kun hvis EPSG-koderne er forskellige
             if (mapProjection !== inputEPSG.value) {
-              store.dispatch('trans/get', mapProjection + '/' + inputEPSG.value + '/' + mpos[0] + ',' + mpos[1])
+              store.dispatch('trans/get', mapProjection + '/' + inputEPSG.value + '/' + mousePos[0] + ',' + mousePos[1])
                 .then(() => {
-                  const output = store.state.trans.data
+                  const mapClickOutput = store.state.trans.data
                   // Abort hvis fejl
-                  if (output.message !== undefined) {
-                    error.value = output.message
+                  if (mapClickOutput.message !== undefined) {
+                    error.value = mapClickOutput.message
                     errorVisible.value = true
                     window.setTimeout(() => {
                       errorVisible.value = false
@@ -213,19 +227,19 @@ export default {
                   }
                   // Vi lader korttransformationer med markøren være udelukkende 2D-transformationer.
                   // Brugeren må selv indstaste en højdemeter manuelt, hvis de vil have det.
-                  inputCoords.value = [output.v1, output.v2, inputCoords.value[2]]
+                  transformationInputCoords.value = [mapClickOutput.v1, mapClickOutput.v2, transformationInputCoords.value[2]]
                 })
             // Ellers er koordinaterne ens
             } else {
-              const output = [parseFloat(mpos[0]), parseFloat(mpos[1]), inputCoords.value[2]]
-              inputCoords.value = output
+              const mapClickOutput = [parseFloat(mousePos[0]), parseFloat(mousePos[1]), transformationInputCoords.value[2]]
+              transformationInputCoords.value = mapClickOutput
             }
             const pinnedMarker = document.getElementById('pinned-marker')
             const overlay = new Overlay({
               element: pinnedMarker,
               positioning: 'center-center'
             })
-            overlay.setPosition([parseFloat(mpos[0]), parseFloat(mpos[1])])
+            overlay.setPosition([parseFloat(mousePos[0]), parseFloat(mousePos[1])])
             olMap.value.addOverlay(overlay)
           })
         })
@@ -234,7 +248,7 @@ export default {
     return {
       olMap,
       mousePositionControl,
-      inputCoords,
+      transformationInputCoords,
       colors,
       store,
       mapProjection,
