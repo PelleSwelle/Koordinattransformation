@@ -1,46 +1,47 @@
 <template>
-    <div class="input">
-        <span class="icon">
-            <Icon v-if="arrowDir == 0"
-              icon="ArrowIcon"
-              :width="2"
-              :height="2"
-              :color="colors.turquoise"
-              :stroke-width="0"
-              class="hori-arrow"
-            />
-            <Icon v-else-if="arrowDir == 1"
-              icon="ArrowIcon"
-              :width="2"
-              :height="2"
-              :color="colors.turquoise"
-              :stroke-width="0"
-              class="vert-arrow"
-            />
-            <Icon v-else-if="arrowDIr == 2"
-              icon="ArrowIcon"
-              :width="2"
-              :height="2"
-              :color="colors.turquoise"
-              :stroke-width="0"
-              class="angle-arrow"
-            />
+  <div class="input">
+    <span class="icon">
+      <Icon
+        v-if="arrowDir == 0"
+        icon="ArrowIcon"
+        :width="2"
+        :height="2"
+        :color="colors.turquoise"
+        :stroke-width="0"
+        class="hori-arrow"
+      />
+      <Icon
+        v-else-if="arrowDir == 1"
+        icon="ArrowIcon"
+        :width="2"
+        :height="2"
+        :color="colors.turquoise"
+        :stroke-width="0"
+        class="vert-arrow"
+      />
+      <Icon
+        v-else-if="arrowDIr == 2"
+        icon="ArrowIcon"
+        :width="2"
+        :height="2"
+        :color="colors.turquoise"
+        :stroke-width="0"
+        class="angle-arrow"
+      />
+    </span>
+    <span class="inputField">
+      <input type="Number" :value="value" />
+    </span>
+    <span class="units">
+      <!-- if in degrees -->
+      <span v-if="props.isDegrees">°{{ direction }}</span>
 
-        </span>
-        <span class="inputField">
-            <input type="Number" :value="value">
-        </span>
-        <span class="units">
-
-            <!-- if in degrees -->
-            <span v-if="props.isDegrees">°{{direction}}</span>
-
-            <!-- if in meters -->
-            <span v-else>m</span>
-            <!-- if the units are in meters, show direction in units-->
-            <span v-show="!isDegrees" class="direction">{{props.direction}}</span>
-        </span>
-    </div>
+      <!-- if in meters -->
+      <span v-else>m</span>
+      <!-- if the units are in meters, show direction in units-->
+      <span v-show="!isDegrees" class="direction">{{ props.direction }}</span>
+    </span>
+  </div>
 </template>
 
 <script setup>
@@ -71,25 +72,25 @@ const props = defineProps({
   padding-bottom: 0.25rem;
 }
 .icon {
-    transform: rotate(90deg);
+  transform: rotate(90deg);
 }
 
 .hori-arrow {
-    transform: rotate(-90deg);
+  transform: rotate(-90deg);
 }
 
 .vert-arrow {
-    transform: rotate(0deg);
+  transform: rotate(0deg);
 }
 
 .angle-arrow {
-    transform: rotate(-45deg);
+  transform: rotate(-45deg);
 }
 
 input {
-    appearance: none;
-    -moz-appearance: textfield;
-    border: none;
-    width: 100%;
+  appearance: none;
+  -moz-appearance: textfield;
+  border: none;
+  width: 100%;
 }
 </style>

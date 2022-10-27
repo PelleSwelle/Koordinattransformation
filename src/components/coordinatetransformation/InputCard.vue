@@ -4,25 +4,25 @@
       <h3>Input</h3>
     </div>
     <section class="coordinate-selection-wrapper">
-      <EpsgSelection :isOutput="false" @epsg-changed="inputEPSGChanged"/>
+      <EpsgSelection :isOutput="false" @epsg-changed="onEpsgChanged"/>
     </section>
 
     <!-- the whole input area -->
     <!-- TODO: style this with flex box. if degrees, one line, if meters 3 lines -->
     <div class="input">
       <div class="inputComponents">
-        <CoordinateInputField :isDegrees=isDegrees :value=degrees[0] :unit="unitFirst" :direction="firstDirection" arrowDir="0"/>
-        <CoordinateInputField :isDegrees=isDegrees :value=degrees[1] :unit="unitSecond" :direction="secondDirection" arrowDir="1"/>
+        <CoordinateInputField :isDegrees=epsgIsDegrees :value=degrees[0] :unit="unitFirst" :direction="firstDirection" arrowDir="0"/>
+        <CoordinateInputField :isDegrees=epsgIsDegrees :value=degrees[1] :unit="unitSecond" :direction="secondDirection" arrowDir="1"/>
         <!-- <CoordinateInputField v-model=degrees[2] :unit="unitThird" :direction="thirdDirection" arrowDir="2"/> -->
       </div>
       <!-- first input -->
       <!-- isDegrees bliver brugt på hele tingen, ikonetinputWrapperen, unit -->
       <!-- TODO: this is doing the same thing twice -->
       <span :class="{
-        isDegreesInput: isDegrees,
-        isMetresInput: !isDegrees}">
+        isDegreesInput: epsgIsDegrees,
+        isMetresInput: !epsgIsDegrees}">
         <!-- Ombyt ikoner ved decimalgrader -->
-        <Icon v-if="isDegrees"
+        <Icon v-if="epsgIsDegrees"
           icon="ArrowIcon"
           :width="2"
           :height="2"
@@ -38,7 +38,7 @@
           :stroke-width="0"
           class="arrow-icon arrow-icon-x-coordinate"
         />
-        <span class="coordinates-input" :class="{degreesInput: isDegrees}">
+        <span class="coordinates-input" :class="{degreesInput: epsgIsDegrees}">
           <input
             class="coordinates"
             :class="{degreesInput: degreesChecked, metresInput: minutesChecked, secondsInput: secondsChecked}"
@@ -46,10 +46,10 @@
             step="0.0001"
             v-model=degrees[0]
           />
-          <span class="unit" v-show="isDegrees">°N</span>
-          <span class="unit" v-show="!isDegrees">m</span>
+          <span class="unit" v-show="epsgIsDegrees">°N</span>
+          <span class="unit" v-show="!epsgIsDegrees">m</span>
         </span>
-        <span class="coordinates-input" :class="{degreesInput: isDegrees}" v-show="isDegrees && (minutesChecked || secondsChecked)">
+        <span class="coordinates-input" :class="{degreesInput: epsgIsDegrees}" v-show="epsgIsDegrees && (minutesChecked || secondsChecked)">
           <input
             class="coordinates"
             :class="{degreesInput: degreesChecked, metresInput: minutesChecked, secondsInput: secondsChecked}"
@@ -59,7 +59,7 @@
           />
           <span class="degrees">'</span>
         </span>
-        <span class="coordinates-input" :class="{degreesInput: isDegrees}" v-show="isDegrees && secondsChecked">
+        <span class="coordinates-input" :class="{degreesInput: epsgIsDegrees}" v-show="epsgIsDegrees && secondsChecked">
           <input
             class="coordinates"
             :class="{degreesInput: degreesChecked, metresInput: minutesChecked, secondsInput: secondsChecked}"
@@ -83,7 +83,7 @@
           :stroke-width="0.75"
         />
       </div>
-      <div class="radiogroup" v-show="isDegrees" :class="{radioGroupDisabled: !isDegrees}">
+      <div class="radiogroup" v-show="epsgIsDegrees" :class="{radioGroupDisabled: !epsgIsDegrees}">
         <label class="radio" @click="checkDegrees">
           <input type="radio" name="date-format">
           <Icon v-show="degreesChecked"
@@ -266,48 +266,53 @@ export default {
     const minutesChecked = ref(false)
     const secondsChecked = ref(false)
     // DMS
-    const degrees = ref([0, 0])
+    const inputValues = ref([0, 0])
     const minutes = ref([0, 0])
     const seconds = ref([0, 0])
     const meters = ref(0)
     const is3D = ref(true)
     // TODO: where does this get set
-    const isDegrees = ref(false)
+    const epsgIsDegrees = ref(false)
     const selected = ref('')
     // Smuksering af inputkoordinaterne i de tre til syv tastefelter
     /**
      * setting the input fields
      */
+    const onEpsgChanged = () => {
+      console.log('changed epsg code, updating input fields')
+
+      updateInputFields()
+    }
     const updateInputFields = () => {
       // if not degrees
-      if (!isDegrees.value || degreesChecked.value) {
+      if (!epsgIsDegrees.value || degreesChecked.value) {
         // values to be filled into the input fields
         const deg0 = parseFloat(mapMarkerValues.value[0].toFixed(4))
         const deg1 = parseFloat(mapMarkerValues.value[1].toFixed(4))
         // filling into the input fields
-        degrees.value[0] = deg0
-        degrees.value[1] = deg1
-        console.log(`isDegrees.value: ${isDegrees.value}`)
+        inputValues.value[0] = deg0
+        inputValues.value[1] = deg1
+        console.log(`isDegrees.value: ${epsgIsDegrees.value}`)
       } else if (minutesChecked.value) {
-        console.log(`isDegrees.value: ${isDegrees.value}`)
+        console.log(`isDegrees.value: ${epsgIsDegrees.value}`)
         const deg0 = Math.floor(mapMarkerValues.value[0])
         const deg1 = Math.floor(mapMarkerValues.value[1])
         const min0 = parseFloat(((mapMarkerValues.value[0] - deg0) * 60).toFixed(4))
         const min1 = parseFloat(((mapMarkerValues.value[1] - deg1) * 60).toFixed(4))
-        degrees.value[0] = deg0
-        degrees.value[1] = deg1
+        inputValues.value[0] = deg0
+        inputValues.value[1] = deg1
         minutes.value[0] = min0
         minutes.value[1] = min1
       } else {
-        console.log(`isDegrees.value: ${isDegrees.value}`)
+        console.log(`isDegrees.value: ${epsgIsDegrees.value}`)
         const deg0 = Math.floor(mapMarkerValues.value[0])
         const deg1 = Math.floor(mapMarkerValues.value[1])
         const min0 = Math.floor((mapMarkerValues.value[0] - deg0) * 60)
         const min1 = Math.floor((mapMarkerValues.value[1] - deg1) * 60)
         const sec0 = parseFloat(((mapMarkerValues.value[0] - deg0 - min0 / 60) * 3600).toFixed(4))
         const sec1 = parseFloat(((mapMarkerValues.value[1] - deg1 - min1 / 60) * 3600).toFixed(4))
-        degrees.value[0] = deg0
-        degrees.value[1] = deg1
+        inputValues.value[0] = deg0
+        inputValues.value[1] = deg1
         minutes.value[0] = min0
         minutes.value[1] = min1
         seconds.value[0] = sec0
@@ -379,12 +384,12 @@ export default {
 
     // Hold øje med de tastefelterne til inputkoordinater,
     // skulle brugeren vælge at indtaste koordinaterne manuelt.
-    watch([degrees.value, minutes.value, seconds.value], () => {
+    watch([inputValues.value, minutes.value, seconds.value], () => {
       // Sørg for at lade koordinaterne være tal og aldrig bogstaver
       // degrees.value[0] -= 0
       // degrees.value[1] -= 0
-      let v1 = degrees.value[0]
-      let v2 = degrees.value[1]
+      let v1 = inputValues.value[0]
+      let v2 = inputValues.value[1]
       if (minutesChecked.value || secondsChecked.value) {
         // minutes.value[0] -= 0
         // minutes.value[1] -= 0
@@ -422,11 +427,12 @@ export default {
       secondsChecked,
       degreesChecked,
       updateInputFields,
-      degrees,
+      onEpsgChanged,
+      degrees: inputValues,
       minutes,
       seconds,
       is3D,
-      isDegrees,
+      epsgIsDegrees,
       meters,
       error,
       selected,
