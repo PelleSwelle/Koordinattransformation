@@ -8,6 +8,7 @@ import store from '@/store'
 import router from '@/router'
 
 import colors from '@/plugins/colors'
+import css from "@dataforsyningen/css"
 
 import App from './App.vue'
 
@@ -31,6 +32,7 @@ app.config.performance = (import.meta.env.NODE_ENV !== 'production')
 app.config.globalProperties.$store = store
 
 app.use(colors)
+.use(css)
 .use(router)
 .use(store)
 
