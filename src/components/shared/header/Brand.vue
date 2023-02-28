@@ -4,7 +4,8 @@
     to="/"
     class="brand"
   >
-  <span
+  <span class="ds-icon-logo-big"></span>
+  <!-- <span
     @mouseenter.stop="isHovering = true"
     @mouseleave.stop="isHovering = false">
     <svg width="45" height="45" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -18,7 +19,7 @@
       <path d="M19.2 21.0001C20.1941 21.0001 21 20.1942 21 19.2001C21 18.2059 20.1941 17.4001 19.2 17.4001C18.2059 17.4001 17.4 18.2059 17.4 19.2001C17.4 20.1942 18.2059 21.0001 19.2 21.0001Z" fill="#0097A7"/>
       <path d="M4.8 6.60002C5.79412 6.60002 6.60001 5.79413 6.60001 4.80002C6.60001 3.8059 5.79412 3.00002 4.8 3.00002C3.80589 3.00002 3 3.8059 3 4.80002C3 5.79413 3.80589 6.60002 4.8 6.60002Z" fill="#0097A7"/>
     </svg>
-  </span>
+  </span> -->
     <div
         class="brand-name"
         @mouseenter.stop="isHovering = true"

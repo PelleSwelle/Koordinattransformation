@@ -59,7 +59,7 @@ export default {
   },
   created () {
     const self = this
-    self.currentbackgroundColor = self.backgroundColor ?? self.$themeColors.darkTurquoise2
+    self.currentbackgroundColor = self.backgroundColor ?? self.$themeColors.sdfi_darkTurquoise
   },
   mounted () {
     const self = this

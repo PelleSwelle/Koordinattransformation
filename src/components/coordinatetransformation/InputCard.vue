@@ -10,8 +10,8 @@
                 </option>
             </select>
         </section>
-        <div class="input">
-            <CoordinateInputField
+        <div class="coordinate-fields">
+            <CoordinateInputField class="coord-field"
                 @coords-changed="emit('input-coords-changed', inputCoords)"
                 :epsgIsDegrees="epsgIsDegrees"
                 :degrees="degrees"
@@ -23,7 +23,7 @@
                 :seconds-checked="secondsChecked"
             />
 
-            <CoordinateInputField
+            <CoordinateInputField class="coord-field"
                 @coords-changed="emit('input-coords-changed', inputCoords)"
                 :epsgIsDegrees="epsgIsDegrees"
                 :degrees="degrees"
@@ -35,16 +35,18 @@
                 :seconds-checked="secondsChecked"
             />
 
-            <span
-                class="coordinate-input third-input"
+            <span id="third-input"
+                class="coord-field height-input"
                 :class="{
                     isDegreesInput: epsgIsDegrees,
                     isMetresInput: !epsgIsDegrees
                 }"
                 v-show = "is3D">
-                <ArrowIcon
-                    style="transform: rotate(45deg); width: 30px; height: 30px;" :color="colors.turquoise" :stroke-width="0" class="arrow-icon"
-                />
+                <span>
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M7 18L6.53766 17.8096C6.45633 18.0071 6.50946 18.2345 6.66988 18.3755C6.83031 18.5166 7.06261 18.5401 7.24807 18.4341L7 18ZM11.9498 5.97915L12.4121 5.78877L11.9498 4.66595L11.4874 5.78877L11.9498 5.97915ZM16.8995 18L16.6515 18.4341C16.8369 18.5401 17.0692 18.5166 17.2296 18.3755C17.3901 18.2345 17.4432 18.0071 17.3619 17.8096L16.8995 18ZM11.9498 15.1716L12.1978 14.7374L11.9498 14.5957L11.7017 14.7374L11.9498 15.1716ZM11.4498 15.3002C11.4498 15.5763 11.6737 15.8002 11.9498 15.8002C12.226 15.8002 12.4498 15.5763 12.4498 15.3002H11.4498ZM12.4498 13.0502C12.4498 12.774 12.226 12.5502 11.9498 12.5502C11.6737 12.5502 11.4498 12.774 11.4498 13.0502H12.4498ZM7.46234 18.1904L12.4121 6.16952L11.4874 5.78877L6.53766 17.8096L7.46234 18.1904ZM11.4874 6.16952L16.4372 18.1904L17.3619 17.8096L12.4121 5.78877L11.4874 6.16952ZM17.1476 17.5659L12.1978 14.7374L11.7017 15.6057L16.6515 18.4341L17.1476 17.5659ZM11.7017 14.7374L6.75193 17.5659L7.24807 18.4341L12.1978 15.6057L11.7017 14.7374ZM12.4498 15.3002V13.0502H11.4498V15.3002H12.4498Z" fill="hsl(171,70%,40%)"/>
+                    </svg>
+                </span>
                 <span class="input-field">
                     <input
                     :class="{degreesInput: true}"
@@ -59,9 +61,10 @@
         <div class="footer">
             <div class="searchbar">
                 <input class="searchbar-input" id="dawa-autocomplete-input"/>
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <span class="ds-icon-icon-fullscreen"></span>
+                <!-- <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M19.5 19.5L16.5 16.5M18 12C18 15.3137 15.3137 18 12 18C8.68629 18 6 15.3137 6 12C6 8.68629 8.68629 6 12 6C15.3137 6 18 8.68629 18 12Z" stroke="hsl(171,70%,40%)" stroke-linecap="round" stroke-linejoin="round"/>
-                </svg>
+                </svg> -->
             </div>
             <div class="radiogroup" v-show="epsgIsDegrees" :class="{radioGroupDisabled: !epsgIsDegrees}">
                 <label class="radio" @click="checkDegrees">
@@ -89,7 +92,7 @@
  * Det skal emitte til sin forældre CoordinateTransformation, hvis koordinaterne eller EPSG-koden ændres,
  * eller hvis der er sket en transformationsfejl (f.eks. out-of-bounds)
  */
-import { ref, inject, onUpdated, watch, onMounted, defineEmits } from 'vue'
+import { ref, inject, onUpdated, watch, onMounted } from 'vue'
 import { useStore } from 'vuex'
 import { useRoute } from 'vue-router'
 
@@ -404,13 +407,23 @@ onUpdated(() => {
 </script>
 
 <style scoped>
-* {
+@import "@dataforsyningen/icons/css/icon-fullscreen.css";
+/* * {
     padding: 0;
     margin: 0;
     box-sizing: border-box;
+} */
+.coordinate-fields {
+    border: solid 1px red;
+    display: flex;
+    flex-direction: row;
 }
 
-.input-field {
+.coordinate-field {
+    display: flex;
+}
+
+/* .input-field {
     border-bottom: var(--action) solid 1px;
     display: inline-flex;
     flex: 1;
@@ -418,61 +431,61 @@ onUpdated(() => {
     margin-bottom: -1.9rem;
     margin-right: 0.5rem;
     padding-bottom: 0.25rem;
-}
+} */
 
-input::-webkit-outer-spin-button,
+/* input::-webkit-outer-spin-button,
 input::-webkit-inner-spin-button {
     -webkit-appearance: none;
-}
-input {
+} */
+/* input {
     -moz-appearance: textfield;
     appearance: textfield;
     border: none;
     width: 100%;
-}
+} */
 
-#epsg-select {
+/* #epsg-select {
     padding-left: 20px;
     width: 100%;
     height: 2.5rem;
     border-radius: 30px;
     border-color: var(--darkSteel);
-}
+} */
 
-.coordinate-selection-wrapper {
+/* .coordinate-selection-wrapper {
     margin: 1rem 0;
-}
-.title-bar {
+} */
+/* .title-bar {
     display: inline-flex;
     align-items: center;
     margin-bottom: 0.5rem;
     width: 100%;
-}
-input:focus {
+} */
+/* input:focus {
     outline: none;
-}
-.hide {
+} */
+/* .hide {
     margin: 0 0 0 auto;
-}
-.info-icon {
+} */
+/* .info-icon {
     border: var(--darkSteel) solid 1px;
     border-radius: 25px;
     margin: 0 0 0 auto;
     transform: rotate(90deg);
-}
-li {
+} */
+/* li {
     list-style-type: none;
     margin: 0;
     border-bottom: var(--action) solid 1px;
-}
-li:hover {
+} */
+/* li:hover {
     background-color: var(--action);
-}
-ul {
+} */
+/* ul {
     list-style-type: none;
-}
+} */
 
-.searchbar {
+/* .searchbar {
     display: inline-flex;
     justify-content: space-between;
     align-items: center;
@@ -481,8 +494,8 @@ ul {
     border-radius: 16px;
     flex-grow: 1;
     padding: 0rem 0.75rem 0.1rem 1rem;
-}
-input[type="radio"] {
+} */
+/* input[type="radio"] {
     appearance: none;
     background-color: #fff;
     margin: 0;
@@ -495,9 +508,9 @@ input[type="radio"] {
     transform: translateY(-0.075em);
     display: grid;
     place-content: center;
-}
+} */
 
-input[type="radio"]::before {
+/* input[type="radio"]::before {
     content: "";
     width: 0.65em;
     height: 0.65em;
@@ -505,41 +518,41 @@ input[type="radio"]::before {
     transform: scale(0);
     transition: 120ms transform ease-in-out;
     box-shadow: inset 1em 1em hsl(171,70%,55%);
-}
+} */
 
-input[type="radio"]:checked::before {
+/* input[type="radio"]:checked::before {
   transform: scale(1);
-}
+} */
 
 .radiogroup {
     display: inline-flex;
     flex-wrap: nowrap;
 }
-.radioGroupDisabled {
+/* .radioGroupDisabled {
     pointer-events: none;
-}
-.footer {
+} */
+/* .footer {
     display: inline-flex;
     align-items: center;
     justify-content: space-between;
     width: 100%;
     margin-top: 1rem;
-}
-.isDegreesInput {
+} */
+/* .isDegreesInput {
     margin-top: 0.25rem;
     display: inline-flex;
     align-items: center;
     width: 100%;
-}
-.isMetresInput {
+} */
+/* .isMetresInput {
     width: 33%;
-}
-.isMetresInput {
+} */
+/* .isMetresInput {
     margin-top: 0.25rem;
     display: inline-flex;
     align-items: center;
-}
-@media screen and (max-width: 1180px) {
+} */
+/* @media screen and (max-width: 1180px) {
     .footer {
         display: inline-flex;
         margin-bottom: 0.5rem;
@@ -547,5 +560,5 @@ input[type="radio"]:checked::before {
     .searchbar {
         flex: 1;
     }
-}
+} */
 </style>

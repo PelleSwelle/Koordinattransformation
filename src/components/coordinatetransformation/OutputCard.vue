@@ -1,5 +1,5 @@
 <template>
-    <section class="output-coordinate">
+    <section class="output-card">
         <h3>Output</h3>
         <section class="coordinate-selection-wrapper">
             <select :class="{ isSelected: this.outputSelected }" id='epsg-output-select' @change="onEpsgSelect">
@@ -35,18 +35,13 @@
                     min. sek.
                     </label>
                 </div>
-                <Icon
-                    icon="InfoIcon"
-                    :width="1.3"
-                    :height="1.3"
-                    :color="colors.black"
-                    class="info-icon"
+                <span class="ds-icon-icon-info"
                     @mouseenter="hover = true"
-                    @mouseleave="hover = false"
-                />
+                    @mouseleave="hover = false">
+                </span>
                 <div class="info-text-container">
                     <Transition>
-                        <p class="info-text" v-if="hover">Repræsentation af geografiske koordinater, vælg mellem decimalgrader, grader og decimalminutter eller grader, minutter og sekunder.</p>
+                        <p class="info-text" v-if="hover">Repræsentation af geografiske koordinater. <br> vælg mellem decimalgrader, grader og decimalminutter eller grader, minutter og sekunder.</p>
                     </Transition>
                 </div>
             </div>
@@ -424,45 +419,43 @@ export default {
 </script>
 
 <style scoped>
-* {
+/* * {
     margin: 0;
     padding: 0;
-}
+} */
 
-option {
-    background: white;
-    color: black;
-}
+/* option {
+    background: var(--sdfi_darkSteel);
+    color: --sdfi_black;
+} */
 
-#epsg-output-select {
+/* #epsg-output-select {
     padding-left: 20px;
     width: 100%;
     height: 2.5rem;
     border-radius: 30px;
-    border-color: var(--darkSteel);
-}
+    border-color: var(--sdfi_darkSteel);
+} */
 
-.isSelected {
-    background: white;
-}
+/* .isSelected {
+    background: var(--sdfi_white);
+} */
 
-.coordinate-selection-wrapper {
+/* .coordinate-selection-wrapper {
     margin-top: 1.4rem;
-}
-.v-enter-active,
-.v-leave-active {
+} */
+/* .v-enter-active, .v-leave-active {
     transition: opacity 0.5s ease;
-}
-.v-enter-from,
-.v-leave-to {
+} */
+/* .v-enter-from, .v-leave-to {
     opacity: 0;
-}
-.info-icon {
-    border: var(--darkSteel) solid 1px;
+} */
+/* .info-icon {
+    border: var(--sdfi_darkSteel) solid 1px;
     border-radius: 25px;
-    background: var(--white);
+    background: var(--sdfi_white);
     margin-left: 0.5rem;
-}
+} */
 .info-text-container {
     position: relative;
     flex-grow: 1;
@@ -471,56 +464,56 @@ option {
     position: absolute;
     width: 20vw;
     padding: 10px;
-    border: 1px solid var(--darkSteel);
+    border: 1px solid var(--sdfi_darkSteel);
     border-radius: 10px;
-    background-color: var(--white);
+    background-color: var(--sdfi_white);
     margin: 0 2rem 0 0.5rem;
 }
-label {
+/* label {
     display: inline-flex;
-}
-.output-coordinate {
+} */
+.output-card {
     padding: 1rem 1.5rem;
-    background-color: var(--lightSteel);
+    background-color: var(--sdfi_lightSteel);
 }
-.transformed-coordinates {
+/* .transformed-coordinates {
     margin: 1rem 0 1rem 0.25rem;
     padding-left: 0.5rem;
     width: 98.75%;
     height: 2.5rem;
     display: flex;
     align-items: center;
-    background-color: var(--white);
-    border: var(--darkSteel) solid 1px;
-}
-.transformed-coordinates.hasTransformed {
-    background-color: var(--action);
-    color: var(--white);
-}
-.transformed-coordinates::selection {
-    background: var(--highlight2);
-}
-.output-coordinates {
+    background-color: var(--sdfi_white);
+    border: var(--sdfi_darkSteel) solid 1px;
+} */
+/* .transformed-coordinates.hasTransformed {
+    background-color: var(--sdfi_action);
+    color: var(--sdfi_white);
+} */
+/* .transformed-coordinates::selection {
+    background: var(--sdfi_highlight);
+} */
+/* .output-coordinates {
     display: inline-flex;
     margin-right: 0.25rem;
-}
-.copy-btn {
-    background-color: var(--lightSteel);
-    color: var(--darkSteel);
-    border: var(--darkSteel) solid 1px;
+} */
+/* .copy-btn {
+    background-color: var(--sdfi_lightSteel);
+    color: var(--sdfi_darkSteel);
+    border: var(--sdfi_darkSteel) solid 1px;
     border-radius: 25px;
     float: right;
     padding: 0.3rem 1rem;
     display: inline-flex;
     align-items: center;
-}
-.copy-btn.hasTransformed {
-    background-color: var(--action);
-    color: var(--white);
-}
-input[type="radio"] {
+} */
+/* .copy-btn.hasTransformed {
+    background-color: var(--sdfi_action);
+    color: var(--sdfi_white);
+} */
+/* input[type="radio"] {
     appearance: none;
-    background-color: #fff;
+    background-color: var(sdfi_white);
     margin: 0;
     font: inherit;
     color: currentColor;
@@ -531,61 +524,58 @@ input[type="radio"] {
     transform: translateY(-0.075em);
     display: grid;
     place-content: center;
-}
+} */
 
-input[type="radio"]::before {
+/* input[type="radio"]::before {
     content: "";
     width: 0.65em;
     height: 0.65em;
     border-radius: 50%;
     transform: scale(0);
     transition: 120ms transform ease-in-out;
-    box-shadow: inset 1em 1em hsl(171,70%,55%);
-}
+    box-shadow: inset 1em 1em var(sdfi_action);
+} */
 
-input[type="radio"]:checked::before {
+/* input[type="radio"]:checked::before {
   transform: scale(1);
-}
-input[type=radio]:checked {
-    outline: var(--darkSteel) solid 1px;
-}
-.radioGroupDisabled {
+} */
+/* input[type=radio]:checked {
+    outline: var(--sdfi_darkSteel) solid 1px;
+} */
+/* .radioGroupDisabled {
     pointer-events: none;
-}
-.footer {
+} */
+/* .footer {
     align-items: center;
     display: inline-flex;
     justify-content: space-between;
     width: 100%;
     flex-wrap: nowrap;
-}
-.isMetres {
+} */
+/* .isMetres {
     justify-content: end;
-}
-.radio-and-info-group {
+} */
+/* .radio-and-info-group {
     display: inline-flex;
     flex-grow: 1;
-}
+} */
 .radiogroup {
     display: inline-flex;
     flex-wrap: nowrap;
 }
-.copy-icon {
-    margin-left: 0.75rem;
-}
-@media screen and (max-width: 828px) {
+/* @media screen and (max-width: 828px) {
     .info-icon {
         display: none;
     }
-}
-@media screen and (max-width: 703px) {
+} */
+/* @media screen and (max-width: 703px) {
     .info-icon {
         display: inline;
     }
-}
-@media screen and (max-width: 410px) {
+} */
+/* @media screen and (max-width: 410px) {
     .info-icon {
         display: none;
     }
-}
+} */
 </style>

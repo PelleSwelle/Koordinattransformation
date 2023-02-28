@@ -1,4 +1,13 @@
-:root, html {
+/* ICONS */
+@import "@dataforsyningen/icons/css/icon-copy.css";
+@import "@dataforsyningen/icons/css/icon-info.css";
+@import "@dataforsyningen/icons/css/map-icon-position.css";
+@import "@dataforsyningen/icons/css/map-icon-koordinater.css";
+@import "@dataforsyningen/icons/css/map-icon-nordpil.css";
+@import "@dataforsyningen/icons/css/icon-burgerbar.css";
+@import "@dataforsyningen/icons/css/logo-big.css";
+
+/* :root, html {
     height: 100%;
     box-sizing: border-box;
     font-size: 16px !important;
@@ -78,7 +87,7 @@ h6 {
 }
 
 .h7 {
-    font-size: 0.70rem; /*10px*/
+    font-size: 0.70rem;
     line-height: 0.875rem;
     font-weight: 500;
     letter-spacing: 0.06rem;
@@ -108,4 +117,4 @@ form {
 
 img {
     image-rendering: crisp-edges;
-}
+} */

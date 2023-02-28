@@ -1,4 +1,4 @@
-.cursor-point {
+/* .cursor-point {
     cursor: pointer;
 }
 .cursor-no {
@@ -20,7 +20,7 @@
 }
 
 .text-small {
-    font-size: 0.875rem; /*14px*/
+    font-size: 0.875rem;
     line-height: 1.125rem;
 }
 
@@ -60,7 +60,7 @@
 }
 
 .micro_icon {
-    font-size: 0.625rem; /*10px*/
+    font-size: 0.625rem;
     line-height: 0.875rem;
     font-weight: 400;
     letter-spacing: 0.06rem;
@@ -68,7 +68,7 @@
 }
 
 .micro_icon_large {
-    font-size: 0.725rem; /*10px*/
+    font-size: 0.725rem;
     line-height: 0.875rem;
     font-weight: 400;
     letter-spacing: 0.06rem;
@@ -140,4 +140,4 @@
 
 .animDelay0 {
     animation-delay: 0ms !important;
-}
+} */
