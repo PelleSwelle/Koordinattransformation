@@ -1,12 +1,9 @@
-/* ICONS */
-@import "@dataforsyningen/icons/css/icon-copy.css";
-@import "@dataforsyningen/icons/css/icon-info.css";
-@import "@dataforsyningen/icons/css/map-icon-position.css";
-@import "@dataforsyningen/icons/css/map-icon-koordinater.css";
-@import "@dataforsyningen/icons/css/map-icon-nordpil.css";
-@import "@dataforsyningen/icons/css/icon-burgerbar.css";
-@import "@dataforsyningen/icons/css/logo-big.css";
-@import "@dataforsyningen/icons/css/icon-search.css";
+/* scaling all icons down to 70% */
+/* .ds-icon-map-icon-nordpil, .ds-icon-icon-copy, .ds-icon-icon-search {
+    transform: scale(70%);
+} */
+
+
 
 /* :root, html {
     height: 100%;

@@ -13,7 +13,7 @@
         </section>
 
         <div class="coordinate-fields">
-            <CoordinateInputField class="coord-field"
+            <CoordinateInputField
                 @coords-changed="emit('input-coords-changed', inputCoords)"
                 :epsgIsDegrees="epsgIsDegrees"
                 :degrees="degrees"
@@ -25,7 +25,7 @@
                 :seconds-checked="secondsChecked"
             />
 
-            <CoordinateInputField class="coord-field"
+            <CoordinateInputField
                 @coords-changed="emit('input-coords-changed', inputCoords)"
                 :epsgIsDegrees="epsgIsDegrees"
                 :degrees="degrees"
@@ -36,30 +36,17 @@
                 :minutes-checked="minutesChecked"
                 :seconds-checked="secondsChecked"
             />
-
-            <span id="third-input"
-                class="coord-field height-input"
-                :class="{
-                    isDegreesInput: epsgIsDegrees,
-                    isMetresInput: !epsgIsDegrees
-                }"
-                v-show = "is3D">
-                <span class="ds-icon-map-icon-nordpil"></span>
-                <span class="input-field">
-                    <input
-                    :class="{degreesInput: true}"
-                    v-model=meters
-                    step="0.0001"
-                    />
-                    <span class="degrees">m</span>
-                </span>
-            </span>
+            <HeightInputField
+                :is3D="is3D"
+                :epsg-is-degrees="epsgIsDegrees"
+                :height-in-meters="meters"
+            />
         </div>
 
         <div class="footer">
             <div class="searchbar">
                 <input class="searchbar-input" id="dawa-autocomplete-input"/>
-                <span class="ds-icon-icon-search"></span>
+                <SearchIcon/>
             </div>
             <div class="radiogroup" v-show="epsgIsDegrees" :class="{radioGroupDisabled: !epsgIsDegrees}">
                 <label class="radio" @click="checkDegrees">
@@ -81,18 +68,20 @@
 
 <script setup>
 /**
- * InputCard er selvsagt komponentet, hvor brugeren vælger en input EPSG-kode og inputkoordinater.
- * Koordinaterne kan tastes manuelt, eller ved at indtaste en addresse i søgefeltet.
- * De kan også nedarves fra Map.vue (og kaldes her 'mapMarkerInputCoords') via inject
- * Det skal emitte til sin forældre CoordinateTransformation, hvis koordinaterne eller EPSG-koden ændres,
- * eller hvis der er sket en transformationsfejl (f.eks. out-of-bounds)
- */
+    * InputCard er selvsagt komponentet, hvor brugeren vælger en input EPSG-kode og inputkoordinater.
+    * Koordinaterne kan tastes manuelt, eller ved at indtaste en addresse i søgefeltet.
+    * De kan også nedarves fra Map.vue (og kaldes her 'mapMarkerInputCoords') via inject
+    * Det skal emitte til sin forældre CoordinateTransformation, hvis koordinaterne eller EPSG-koden ændres,
+    * eller hvis der er sket en transformationsfejl (f.eks. out-of-bounds)
+*/
 import { ref, inject, onUpdated, watch, onMounted } from 'vue'
 import { useStore } from 'vuex'
 import { useRoute } from 'vue-router'
 
 import { dawaAutocomplete } from 'dawa-autocomplete2'
 import CoordinateInputField from './CoordinateInputField.vue'
+import HeightInputField from './HeightInputField.vue'
+import SearchIcon from '@/assets/icons/SearchIcon.vue'
 
 const mapMarkerInputCoords = inject('mapMarkerInputCoords')
 const inputCoords = ref(mapMarkerInputCoords.value)
@@ -402,19 +391,22 @@ onUpdated(() => {
 </script>
 
 <style scoped>
-@import "@dataforsyningen/icons/css/icon-fullscreen.css";
 /* * {
     padding: 0;
     margin: 0;
     box-sizing: border-box;
 } */
 .coordinate-fields {
-    border: solid 1px red;
     display: flex;
     flex-direction: row;
+    /* height: 18%; the exact height of icons and input fields */
 }
 
 .coordinate-field {
+    display: flex;
+}
+
+#third-input {
     display: flex;
 }
 
@@ -533,20 +525,7 @@ input::-webkit-inner-spin-button {
     width: 100%;
     margin-top: 1rem;
 } */
-/* .isDegreesInput {
-    margin-top: 0.25rem;
-    display: inline-flex;
-    align-items: center;
-    width: 100%;
-} */
-/* .isMetresInput {
-    width: 33%;
-} */
-/* .isMetresInput {
-    margin-top: 0.25rem;
-    display: inline-flex;
-    align-items: center;
-} */
+
 /* @media screen and (max-width: 1180px) {
     .footer {
         display: inline-flex;

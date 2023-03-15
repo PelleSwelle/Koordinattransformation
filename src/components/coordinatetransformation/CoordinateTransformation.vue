@@ -1,29 +1,36 @@
 <template>
     <Transition name="close">
-        <section v-show="!menuClosed || window.width > 704" class="container">
-            <article class="coordinate-transformation-box" ref="mother">
-                <InputCard class="input"
-                    @input-epsg-changed="inputEPSGChanged"
-                    @error-occurred="errorOccurred"
-                    @input-coords-changed="inputCoordsChanged"
-                    @is-3d-changed="is3DChanged"
-                />
-                <OutputCard class="output"
-                    :inputEPSG=inputEPSG
-                    :inputCoords=inputCoords
-                    @error-occurred="errorOccurred"
-                    @coordinates-copied="coordinatesCopied"
-                    :is3D=is3D
-                />
-                <menu-closer class="menu-closer" @handle-close="this.menuClosed = true"/>
-            </article>
+        <div v-show="menuOpen || window.width > 1000" class="coordinate-transformation-box" ref="mother">
+            <InputCard class="input"
+                @input-epsg-changed="inputEPSGChanged"
+                @error-occurred="errorOccurred"
+                @input-coords-changed="inputCoordsChanged"
+                @is-3d-changed="is3DChanged"
+            />
+            <OutputCard class="output"
+                :inputEPSG=inputEPSG
+                :inputCoords=inputCoords
+                @error-occurred="errorOccurred"
+                @coordinates-copied="coordinatesCopied"
+                :is3D=is3D
+            />
+            <menu-closer
+                :iconUp="this.menuOpen"
+                class="menu-closer"
+                @handle-close="this.menuOpen = false"
+            />
             <div v-show="popupVisible" class="message">Koordinater kopieret</div>
             <div v-show="mapErrorIsVisible" class="message">{{ mapError }}</div>
             <div v-show="errorVisible" class="message">{{ error }}</div>
-        </section>
+        </div>
     </Transition>
+
     <Transition name="open">
-        <menu-closer class="menu-closed" v-show="this.menuClosed && window.width < 704" @handle-close="this.menuClosed = false" />
+        <menu-closer
+            :iconUp="this.menuOpen"
+            class="menu-closed"
+            v-show="!this.menuOpen && window.width < 1000"
+            @handle-close="this.menuOpen = true" />
     </Transition>
 </template>
 
@@ -101,7 +108,7 @@ export default {
         const colors = inject('themeColors')
         const inputEPSG = inject('inputEPSG')
         const popupVisible = ref(false)
-        const menuClosed = ref(false)
+        const menuOpen = ref(true)
         const window = ref({ width: 0, height: 0 })
         const errorVisible = ref('')
         const error = ref('')
@@ -111,7 +118,7 @@ export default {
             colors,
             inputEPSG,
             popupVisible,
-            menuClosed,
+            menuOpen,
             window,
             error,
             errorVisible,
@@ -120,32 +127,13 @@ export default {
     },
 
     created () {
-        window.addEventListener('resize', this.handleResize)
-        this.handleResize()
+        // window.addEventListener('resize', this.handleResize)
+        // this.handleResize()
     }
 }
 </script>
 
 <style scoped>
-.close-enter-active, .close-leave-active {
-    transition: all 1s ease-in-out;
-}
-.close-enter-from, .close-leave-to {
-    transform: translateY(-50vh);
-}
-.open-enter-active {
-    transition: all 1s step-end;
-}
-.open-leave-active {
-    transition: all 1s step-start;
-}
-.open-enter-from, .open-leave-to {
-    opacity: 0;
-}
-.container {
-    display: flex;
-    flex-direction: column;
-}
 .coordinate-transformation-box {
     display: grid;
     width: 100%;
@@ -256,5 +244,22 @@ export default {
     .output {
         border-radius: 0 0 0 0;
     }
+}
+
+/* ANIMATION */
+.close-enter-active, .close-leave-active {
+    transition: all 1s ease-in-out;
+}
+.close-enter-from, .close-leave-to {
+    transform: translateY(-50vh);
+}
+.open-enter-active {
+    transition: all 1s step-end;
+}
+.open-leave-active {
+    transition: all 1s step-start;
+}
+.open-enter-from, .open-leave-to {
+    opacity: 0;
 }
 </style>

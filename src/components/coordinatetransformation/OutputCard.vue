@@ -35,10 +35,10 @@
                     min. sek.
                     </label>
                 </div>
-                <span class="ds-icon-icon-info"
+                <InfoIcon
                     @mouseenter="hover = true"
-                    @mouseleave="hover = false">
-                </span>
+                    @mouseleave="hover = false"
+                />
                 <div class="info-text-container">
                     <Transition>
                         <p class="info-text" v-if="hover">Repræsentation af geografiske koordinater. <br> vælg mellem decimalgrader, grader og decimalminutter eller grader, minutter og sekunder.</p>
@@ -49,12 +49,12 @@
                 Kopiér
                 <span v-show="!hasTransformed || isLoading">
                     <!-- copy icon - inactive -->
-                    <span class="ds-icon-icon-copy"></span>
+                    <CopyIconVue/>
                 </span>
 
                 <span v-show="hasTransformed && !isLoading">
                     <!-- copy icon active ACTION COLOR -->
-                    <span class="ds-icon-icon-copy"></span>
+                    <CopyIcon/>
                 </span>
             </button>
         </article>
@@ -69,6 +69,8 @@ import { defineAsyncComponent, inject, onMounted, ref } from 'vue'
 import { useStore } from 'vuex'
 import { useRoute } from 'vue-router'
 import Formatter from './Formatting'
+import CopyIcon from '@/assets/icons/CopyIcon.vue'
+import InfoIcon from '@/assets/icons/InfoIcon.vue'
 
 export default {
     name: 'OutputCoordinates',
@@ -89,8 +91,10 @@ export default {
     },
 
     components: {
-        Loader: defineAsyncComponent(() => import('@/components/shared/Loader.vue'))
-    },
+    Loader: defineAsyncComponent(() => import("@/components/shared/Loader.vue")),
+    CopyIcon,
+    InfoIcon
+},
 
     methods: {
         // En output-EPSG er valgt: Der skal foretages transformation,
@@ -474,7 +478,7 @@ export default {
     padding: 1rem 1.5rem;
     background-color: var(--sdfi_lightSteel);
 }
-/* .transformed-coordinates {
+.transformed-coordinates {
     margin: 1rem 0 1rem 0.25rem;
     padding-left: 0.5rem;
     width: 98.75%;
@@ -483,19 +487,19 @@ export default {
     align-items: center;
     background-color: var(--sdfi_white);
     border: var(--sdfi_darkSteel) solid 1px;
-} */
-/* .transformed-coordinates.hasTransformed {
+}
+.transformed-coordinates.hasTransformed {
     background-color: var(--sdfi_action);
     color: var(--sdfi_white);
-} */
-/* .transformed-coordinates::selection {
+}
+.transformed-coordinates::selection {
     background: var(--sdfi_highlight);
-} */
-/* .output-coordinates {
+}
+.output-coordinates {
     display: inline-flex;
     margin-right: 0.25rem;
-} */
-/* .copy-btn {
+}
+.copy-btn {
     background-color: var(--sdfi_lightSteel);
     color: var(--sdfi_darkSteel);
     border: var(--sdfi_darkSteel) solid 1px;
@@ -504,11 +508,11 @@ export default {
     padding: 0.3rem 1rem;
     display: inline-flex;
     align-items: center;
-} */
-/* .copy-btn.hasTransformed {
+}
+.copy-btn.hasTransformed {
     background-color: var(--sdfi_action);
     color: var(--sdfi_white);
-} */
+}
 /* input[type="radio"] {
     appearance: none;
     background-color: var(sdfi_white);

@@ -11,8 +11,7 @@
             />
             <div id="mouse-position"></div>
         </section>
-        <span id="pinned-marker"
-            class="ds-icon-map-icon-position"></span>
+        <PositionIcon id="pinned-marker"/>
     </div>
 </template>
 
@@ -45,6 +44,7 @@ import {
   FullScreen
 } from 'ol/control'
 import { useStore } from 'vuex'
+import PositionIcon from '@/assets/icons/PositionIcon.vue'
 
 const CoordinateTransformation = defineAsyncComponent(() => import('@/components/coordinatetransformation/CoordinateTransformation.vue'))
 const colors = inject('themeColors')
