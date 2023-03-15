@@ -1,13 +1,13 @@
 <template>
     <Transition name="close">
         <div v-show="menuOpen || window.width > 1000" class="coordinate-transformation-box" ref="mother">
-            <InputCard class="input"
+            <InputCard class="input-card"
                 @input-epsg-changed="inputEPSGChanged"
                 @error-occurred="errorOccurred"
                 @input-coords-changed="inputCoordsChanged"
                 @is-3d-changed="is3DChanged"
             />
-            <OutputCard class="output"
+            <OutputCard class="output-card"
                 :inputEPSG=inputEPSG
                 :inputCoords=inputCoords
                 @error-occurred="errorOccurred"
@@ -150,7 +150,7 @@ export default {
     background: var(--sdfi_lightSteel);
     border-radius: 18px;
 }
-.input {
+.input-card {
     border-radius: 25px 25px 0 0;
     position: relative;
     background: var(--sdfi_white);
@@ -158,12 +158,12 @@ export default {
     border-bottom: var(--sdfi_action) solid 2px;
     border-right: none;
 }
-.output {
+.output-card {
     border-radius: 0 0 0 0;
     border-top: none;
 }
 
-.input:after {
+.input-card:after {
     content: "";
     position: absolute;
     bottom: 0;
@@ -176,7 +176,7 @@ export default {
     z-index: 3;
     transform: translateY(100%);
 }
-.input:before {
+.input-card:before {
     content: "";
     position: absolute;
     bottom: 0;
@@ -202,12 +202,12 @@ export default {
         grid-template-columns: 1fr 1fr;
         grid-template-areas: "input output"
     }
-    .input {
+    .input-card {
         border-radius: 25px 0 0 25px;
         border-right: var(--sdfi_action) solid 2px;
         border-bottom: none;
     }
-    .input:after {
+    .input-card:after {
         content: "";
         position: absolute;
         bottom: 50%;
@@ -220,7 +220,7 @@ export default {
         z-index: 3;
         transform: translateY(50%);
     }
-    .input:before {
+    .input-card:before {
         content: "";
         position: absolute;
         bottom: 50%;
@@ -233,7 +233,7 @@ export default {
         z-index: 2;
         transform: translateY(50%);
     }
-    .output {
+    .output-card {
         border-radius: 0 25px 25px 0;
     }
     .menu-closer {
@@ -241,7 +241,7 @@ export default {
     }
 }
 @media screen and (max-width: 703px) {
-    .output {
+    .output-card {
         border-radius: 0 0 0 0;
     }
 }

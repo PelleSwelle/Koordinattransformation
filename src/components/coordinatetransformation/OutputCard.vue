@@ -467,7 +467,7 @@ export default {
     width: 20vw;
     padding: 10px;
     border: 1px solid var(--sdfi_darkSteel);
-    border-radius: 10px;
+    /* border-radius: 10px; */
     background-color: var(--sdfi_white);
     margin: 0 2rem 0 0.5rem;
 }
@@ -503,7 +503,7 @@ export default {
     background-color: var(--sdfi_lightSteel);
     color: var(--sdfi_darkSteel);
     border: var(--sdfi_darkSteel) solid 1px;
-    border-radius: 25px;
+    /* border-radius: 25px; */
     float: right;
     padding: 0.3rem 1rem;
     display: inline-flex;

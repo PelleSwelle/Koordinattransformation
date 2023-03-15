@@ -11,8 +11,8 @@
                 </option>
             </select>
         </section>
-
-        <div class="coordinate-fields">
+        <!-- TODO: show vertical when degrees -->
+        <div class="coordinate-fields" :class="{inRow: !epsgIsDegrees, inColumn: epsgIsDegrees}">
             <CoordinateInputField
                 @coords-changed="emit('input-coords-changed', inputCoords)"
                 :epsgIsDegrees="epsgIsDegrees"
@@ -396,10 +396,14 @@ onUpdated(() => {
     margin: 0;
     box-sizing: border-box;
 } */
-.coordinate-fields {
+
+.inRow {
     display: flex;
     flex-direction: row;
-    /* height: 18%; the exact height of icons and input fields */
+}
+.inColumn {
+    display: flex;
+    flex-direction: column;
 }
 
 .coordinate-field {

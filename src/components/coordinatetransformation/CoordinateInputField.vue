@@ -10,7 +10,7 @@
 
         <span class="input-with-unit"
             :class="{degreesInput: epsgIsDegrees}">
-            <input
+            <input id="myselect"
                 class="coordinates"
                 :class="{
                     degreesInput: degreesChecked,

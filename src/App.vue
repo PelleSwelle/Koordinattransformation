@@ -40,7 +40,7 @@ if (isConsole || isWearable || isSmartTV) {
 * {
     padding: 0;
     margin: 0;
-    box-sizing: border-box;
+    /* box-sizing: border-box; */
 }
 :root, html, body {
     height: 100%;
@@ -69,7 +69,7 @@ main {
     margin: 1em 0 0 0;
     padding: 0;
     text-align: left;
-    border-radius: 0.3125em;
+    /* border-radius: 0.3125em; */
     background: #fcfcfc;
     box-shadow: 0 0.0625em 0.15625em rgba(0,0,0,.15);
     position: absolute;
@@ -95,6 +95,9 @@ main {
 .dawa-autocomplete-suggestions .dawa-autocomplete-suggestion:first-child {
     border-top-left-radius: inherit;
     border-top-right-radius: inherit;
+
+    z-index: 10 !important;
+    overflow: visible !important;
 }
 
 .dawa-autocomplete-suggestions .dawa-autocomplete-suggestion:last-child {
