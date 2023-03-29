@@ -78,17 +78,22 @@ onUpdated(() => {
 </script>
 
 <style scoped lang="scss">
+
 .coordinate-input-field {
     display: flex;
     flex-direction: row;
+    width: 30%;
+
 
     .input-with-unit {
         border-bottom: var(--sdfi_action) solid 1px;
         display: inline-flex;
         flex: 1;
+        
         height: 1.3em;
 
         input {
+            width: 90%;
             border: none;
             height: 1em;
             // padding-left: 5px;
@@ -104,6 +109,7 @@ onUpdated(() => {
     border: none;
     width: 100%;
 } */
+
 
 .arrowIconXCoordinate {
     transform: rotate(90deg);

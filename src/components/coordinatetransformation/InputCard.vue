@@ -1,5 +1,5 @@
 <template>
-    <section class="input-coordinate">
+    <section class="input-card">
         <div class="title-bar">
             <h3>Input</h3>
         </div>
@@ -13,7 +13,7 @@
             </select>
         </section>
 
-        <section class="ds-grid-item-large coordinate-input-fields" :class="{inRow: !epsgIsDegrees, inColumn: epsgIsDegrees}">
+        <section class="coordinate-input-fields" :class="{inRow: !epsgIsDegrees, inColumn: epsgIsDegrees}">
             <CoordinateInputField
                 @coords-changed="emit('input-coords-changed', inputCoords)"
                 :epsgIsDegrees="epsgIsDegrees"
@@ -400,11 +400,12 @@ onUpdated(() => {
 .coordinate-selection-wrapper {
     margin: 1rem 0;
     display: flex;
+    /** EPSG SELECT */
+    #epsg-select {
+        padding-left: 2rem;
+    }
 }
 
-#dawa-autocomplete-input {
-    margin: 0px;
-}
 
 /** ICONS */
 #hash-icon {
@@ -418,15 +419,12 @@ onUpdated(() => {
     bottom: 3.4rem;
 }
 
-/** EPSG SELECT */
-#epsg-select {
-    padding-left: 2rem;
-}
 
 /** COORDINATE FIELDS */
 .coordinate-input-fields {
     margin-bottom: 1rem;
     justify-content: space-between;
+    
 
 }
 
@@ -439,14 +437,6 @@ onUpdated(() => {
     flex-direction: column;
 }
 
-.coordinate-field {
-    display: flex;
-}
-
-#third-input {
-    display: flex;
-}
-
 .radiogroup {
     right: 0px;
     display: flex;
@@ -456,6 +446,9 @@ onUpdated(() => {
     pointer-events: none;
 } */
 .footerWithoutRadios {
+    #dawa-autocomplete-input {
+        margin: 0px;
+    }
     // display: flex;
     // align-items: center;
     // justify-content: space-between;
@@ -492,7 +485,7 @@ onUpdated(() => {
     }
 }
 
-/* @media screen and (max-width: 1180px) {
+@media screen and (max-width: 1180px) {
     .footer {
         display: inline-flex;
         margin-bottom: 0.5rem;
@@ -500,5 +493,5 @@ onUpdated(() => {
     .searchbar {
         flex: 1;
     }
-} */
+}
 </style>

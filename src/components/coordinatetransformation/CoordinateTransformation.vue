@@ -133,71 +133,77 @@ export default {
 }
 </script>
 
-<style scoped>
-.coordinate-transformation-box {
-    display: grid;
-    width: 100%;
-    border: 2px solid var(--sdfi_darkSteel);
-    border-radius: 25px;
-    box-shadow: 0 0 0 4px var(--sdfi_vibrantSteel);
-    z-index: 1;
-}
-.message {
-    align-self: center;
-    text-align: center;
-    margin: 1rem 0 0 0;
-    padding: 1rem;
-    background: var(--sdfi_lightSteel);
-    border-radius: 18px;
-}
-.input-card {
-    border-radius: 25px 25px 0 0;
-    position: relative;
-    background: var(--sdfi_white);
-    padding: 1rem 1.5rem;
-    border-bottom: var(--sdfi_action) solid 2px;
-    border-right: none;
-}
-.output-card {
-    border-radius: 0 0 0 0;
-    border-top: none;
+<style scoped lang="scss">
+@media screen {
+    .coordinate-transformation-box {
+        display: grid;
+        width: 100%;
+        border: 2px solid var(--sdfi_darkSteel);
+        border-radius: 25px;
+        box-shadow: 0 0 0 4px var(--sdfi_vibrantSteel);
+        z-index: 1;
+    }
+    .message {
+        align-self: center;
+        text-align: center;
+        margin: 1rem 0 0 0;
+        padding: 1rem;
+        background: var(--sdfi_lightSteel);
+        border-radius: 18px;
+    }
+    .input-card {
+        border-radius: 25px 25px 0 0;
+        position: relative;
+        padding: 1rem 1.5rem;
+        background: var(--sdfi_white);
+        border-bottom: var(--sdfi_action) solid 2px;
+        border-right: none;
+    }
+    .output-card {
+        border-radius: 0 0 0 0;
+        border-top: none;
+    }
+
+    .input-card:after {
+        content: "";
+        position: absolute;
+        bottom: 0;
+        left: 50%;
+        border-style: solid;
+        border-width: 14px 10px 0;
+        border-color: var(--sdfi_white) transparent;
+        display: block;
+        width: 0;
+        z-index: 3;
+        transform: translateY(100%);
+    }
+    
+    .input-card:before {
+        content: "";
+        position: absolute;
+        bottom: 0;
+        left: 50%;
+        border-style: solid;
+        border-width: 18px 13px 0;
+        border-color: var(--sdfi_action) transparent;
+        display: block;
+        width: 0;
+        z-index: 2;
+        transform: translateY(100%) translateX(-3px);
+    }
+    
+    .menu-closer {
+        border-radius: 0 0 25px 25px;
+    }
+    
+    .menu-closed {
+        border-radius: 25px;
+        border: 2px solid var(--sdfi_darkSteel);
+        box-shadow: 0 0 0 4px var(--sdfi_vibrantSteel);
+    }    
 }
 
-.input-card:after {
-    content: "";
-    position: absolute;
-    bottom: 0;
-    left: 50%;
-    border-style: solid;
-    border-width: 14px 10px 0;
-    border-color: var(--sdfi_white) transparent;
-    display: block;
-    width: 0;
-    z-index: 3;
-    transform: translateY(100%);
-}
-.input-card:before {
-    content: "";
-    position: absolute;
-    bottom: 0;
-    left: 50%;
-    border-style: solid;
-    border-width: 18px 13px 0;
-    border-color: var(--sdfi_action) transparent;
-    display: block;
-    width: 0;
-    z-index: 2;
-    transform: translateY(100%) translateX(-3px);
-}
-.menu-closer {
-    border-radius: 0 0 25px 25px;
-}
-.menu-closed {
-    border-radius: 25px;
-    border: 2px solid var(--sdfi_darkSteel);
-    box-shadow: 0 0 0 4px var(--sdfi_vibrantSteel);
-}
-@media screen and (min-width: 44rem) {
+@media screen and (min-width: 1000px) {
     .coordinate-transformation-box {
         grid-template-columns: 1fr 1fr;
         grid-template-areas: "input output"
@@ -239,25 +245,23 @@ export default {
     .menu-closer {
         display: none;
     }
-}
-@media screen and (max-width: 703px) {
-    .output-card {
-        border-radius: 0 0 0 0;
-    }
+
+
 }
 
 /* ANIMATION */
 .close-enter-active, .close-leave-active {
-    transition: all 1s ease-in-out;
+    transition: all .5s ease-in-out;
 }
+
 .close-enter-from, .close-leave-to {
     transform: translateY(-50vh);
 }
 .open-enter-active {
-    transition: all 1s step-end;
+    transition: all .5s step-end;
 }
 .open-leave-active {
-    transition: all 1s step-start;
+    transition: all .5s step-start;
 }
 .open-enter-from, .open-leave-to {
     opacity: 0;

@@ -36,6 +36,7 @@ const props = defineProps({
 
 .icon-coordinate-unit {
     display: inline-flex;
+    width: 30%;
 }
 .input-with-unit {
     border-bottom: var(--sdfi_action) solid 1px;
@@ -44,6 +45,7 @@ const props = defineProps({
     height: 1.5em;
 
     input {
+        width: 90%;
         border: none;
         height: 1em;
         padding-left: 5px;
