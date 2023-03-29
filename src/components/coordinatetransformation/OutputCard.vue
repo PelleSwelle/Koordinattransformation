@@ -41,7 +41,10 @@
                 />
                 <div class="info-text-container">
                     <Transition>
-                        <p class="info-text" v-if="hover">Repræsentation af geografiske koordinater. <br> vælg mellem decimalgrader, grader og decimalminutter eller grader, minutter og sekunder.</p>
+                        <p class="info-text"
+                            v-if="hover">
+                                Repræsentation af geografiske koordinater. <br> vælg mellem decimalgrader, grader og decimalminutter eller grader, minutter og sekunder.
+                        </p>
                     </Transition>
                 </div>
             </div>
@@ -494,6 +497,7 @@ export default {
 }
 .transformed-coordinates::selection {
     background: var(--sdfi_highlight);
+    color: white;
 }
 .output-coordinates {
     display: inline-flex;

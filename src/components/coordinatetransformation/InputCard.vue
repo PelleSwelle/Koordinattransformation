@@ -5,14 +5,15 @@
         </div>
 
         <section class="coordinate-selection-wrapper">
+            <CoordinatesIcon id="hash-icon"/>
             <select id="epsg-select" @change="inputEPSGChanged">
                 <option class="epsg-option" v-for="(code, index) in filteredCRS" :key="index" :value='code' >
                     {{ code.title_short }} ({{ code.srid }})
                 </option>
             </select>
         </section>
-        <!-- TODO: show vertical when degrees -->
-        <div class="coordinate-fields" :class="{inRow: !epsgIsDegrees, inColumn: epsgIsDegrees}">
+
+        <section class="ds-grid-item-large coordinate-input-fields" :class="{inRow: !epsgIsDegrees, inColumn: epsgIsDegrees}">
             <CoordinateInputField
                 @coords-changed="emit('input-coords-changed', inputCoords)"
                 :epsgIsDegrees="epsgIsDegrees"
@@ -36,33 +37,37 @@
                 :minutes-checked="minutesChecked"
                 :seconds-checked="secondsChecked"
             />
+
             <HeightInputField
                 :is3D="is3D"
                 :epsg-is-degrees="epsgIsDegrees"
                 :height-in-meters="meters"
             />
-        </div>
+        </section>
 
-        <div class="footer">
-            <div class="searchbar">
-                <input class="searchbar-input" id="dawa-autocomplete-input"/>
-                <SearchIcon/>
-            </div>
+        <section class="footer" :class="{footerWithRadios: epsgIsDegrees, footerWithoutRadios: !epsgIsDegrees}">
+            <fieldset class="searchbar">
+                <input type="text" id="dawa-autocomplete-input" placeholder="Indtast en addresse for at søge"/>
+                <!-- <SearchIcon id="search-icon"/> -->
+            </fieldset>
+
             <div class="radiogroup" v-show="epsgIsDegrees" :class="{radioGroupDisabled: !epsgIsDegrees}">
                 <label class="radio" @click="checkDegrees">
                     <input type="radio" name="date-format">
                     DD
                 </label>
+
                 <label class="radio" @click="checkMinutes">
                     <input type="radio" name="date-format">
                     min.
                 </label>
+
                 <label class="radio" @click="checkSeconds">
                     <input type="radio" name="date-format">
                     <span style="display: inline-flex;">min. sek.</span>
                 </label>
             </div>
-        </div>
+        </section>
     </section>
 </template>
 
@@ -82,6 +87,7 @@ import { dawaAutocomplete } from 'dawa-autocomplete2'
 import CoordinateInputField from './CoordinateInputField.vue'
 import HeightInputField from './HeightInputField.vue'
 import SearchIcon from '@/assets/icons/SearchIcon.vue'
+import CoordinatesIcon from '@/assets/icons/CoordinatesIcon.vue'
 
 const mapMarkerInputCoords = inject('mapMarkerInputCoords')
 const inputCoords = ref(mapMarkerInputCoords.value)
@@ -390,12 +396,39 @@ onUpdated(() => {
 })
 </script>
 
-<style scoped>
-/* * {
-    padding: 0;
-    margin: 0;
-    box-sizing: border-box;
-} */
+<style scoped lang="scss">
+.coordinate-selection-wrapper {
+    margin: 1rem 0;
+    display: flex;
+}
+
+#dawa-autocomplete-input {
+    margin: 0px;
+}
+
+/** ICONS */
+#hash-icon {
+    position: absolute;
+    left: 2em;
+    top: 3.8em;
+}
+#search-icon {
+    position: absolute;
+    right: 2rem;
+    bottom: 3.4rem;
+}
+
+/** EPSG SELECT */
+#epsg-select {
+    padding-left: 2rem;
+}
+
+/** COORDINATE FIELDS */
+.coordinate-input-fields {
+    margin-bottom: 1rem;
+    justify-content: space-between;
+
+}
 
 .inRow {
     display: flex;
@@ -414,121 +447,50 @@ onUpdated(() => {
     display: flex;
 }
 
-/* .input-field {
-    border-bottom: var(--action) solid 1px;
-    display: inline-flex;
-    flex: 1;
-    width: 10%;
-    margin-bottom: -1.9rem;
-    margin-right: 0.5rem;
-    padding-bottom: 0.25rem;
-} */
-
-/* input::-webkit-outer-spin-button,
-input::-webkit-inner-spin-button {
-    -webkit-appearance: none;
-} */
-/* input {
-    -moz-appearance: textfield;
-    appearance: textfield;
-    border: none;
-    width: 100%;
-} */
-
-/* #epsg-select {
-    padding-left: 20px;
-    width: 100%;
-    height: 2.5rem;
-    border-radius: 30px;
-    border-color: var(--darkSteel);
-} */
-
-/* .coordinate-selection-wrapper {
-    margin: 1rem 0;
-} */
-/* .title-bar {
-    display: inline-flex;
-    align-items: center;
-    margin-bottom: 0.5rem;
-    width: 100%;
-} */
-/* input:focus {
-    outline: none;
-} */
-/* .hide {
-    margin: 0 0 0 auto;
-} */
-/* .info-icon {
-    border: var(--darkSteel) solid 1px;
-    border-radius: 25px;
-    margin: 0 0 0 auto;
-    transform: rotate(90deg);
-} */
-/* li {
-    list-style-type: none;
-    margin: 0;
-    border-bottom: var(--action) solid 1px;
-} */
-/* li:hover {
-    background-color: var(--action);
-} */
-/* ul {
-    list-style-type: none;
-} */
-
-/* .searchbar {
-    display: inline-flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-right: 0.5rem;
-    border: var(--darkSteel) solid 1px;
-    border-radius: 16px;
-    flex-grow: 1;
-    padding: 0rem 0.75rem 0.1rem 1rem;
-} */
-/* input[type="radio"] {
-    appearance: none;
-    background-color: #fff;
-    margin: 0;
-    font: inherit;
-    color: currentColor;
-    width: 1.15em;
-    height: 1.15em;
-    border: 0.15em solid currentColor;
-    border-radius: 50%;
-    transform: translateY(-0.075em);
-    display: grid;
-    place-content: center;
-} */
-
-/* input[type="radio"]::before {
-    content: "";
-    width: 0.65em;
-    height: 0.65em;
-    border-radius: 50%;
-    transform: scale(0);
-    transition: 120ms transform ease-in-out;
-    box-shadow: inset 1em 1em hsl(171,70%,55%);
-} */
-
-/* input[type="radio"]:checked::before {
-  transform: scale(1);
-} */
-
 .radiogroup {
-    display: inline-flex;
+    right: 0px;
+    display: flex;
     flex-wrap: nowrap;
 }
 /* .radioGroupDisabled {
     pointer-events: none;
 } */
-/* .footer {
-    display: inline-flex;
-    align-items: center;
-    justify-content: space-between;
+.footerWithoutRadios {
+    // display: flex;
+    // align-items: center;
+    // justify-content: space-between;
     width: 100%;
     margin-top: 1rem;
-} */
+
+    .searchbar {
+        // display: flex;
+        // flex-direction: row;
+        // justify-content: space-between;
+        // align-items: center;
+        // margin-right: 0.5rem;
+        // border: var(--darkSteel) solid 1px;
+        // border-radius: 16px;
+        // flex-grow: 1;
+        // padding: 0rem 0.75rem 0.1rem 1rem;
+    }
+}
+
+.footerWithRadios {
+    height: 3rem;
+    display: flex;
+    align-items: center;
+
+    .searchbar {
+        width: 65%;
+        margin: 0px;
+    }
+
+    .radiogroup {
+        width: 35%;
+        align-items: center;
+        transform: translateY(5px);
+    }
+}
 
 /* @media screen and (max-width: 1180px) {
     .footer {

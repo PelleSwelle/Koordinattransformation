@@ -1,20 +1,23 @@
 <template>
-    <span
-        class="coordinate-input-field"
-        :class="{
-            isDegreesInput: props.epsgIsDegrees,
-            isMetresInput: !props.epsgIsDegrees
-        }"
-        v-show = "props.is3D">
+    <fieldset class="icon-coordinate-unit">
         <ArrowIcon/>
-        <span class="input-field">
-            <input
-                v-model=props.heightInMeters
-                step="0.0001"
-            />
+        <span
+            class="input-with-unit"
+            :class="{
+                isDegreesInput: props.epsgIsDegrees,
+                isMetresInput: !props.epsgIsDegrees
+            }"
+            v-show = "props.is3D">
+            <span class="input-field">
+                <input
+                    v-model=props.heightInMeters
+                    step="0.0001"
+                />
+            </span>
+            <span class="units">m</span>
         </span>
-        <span class="units">m</span>
-    </span>
+    </fieldset>
+
 </template>
 
 <script setup>
@@ -31,35 +34,34 @@ const props = defineProps({
 
 <style scoped lang="scss">
 
-.coordinate-input-field {
-    display: flex;
+.icon-coordinate-unit {
+    display: inline-flex;
+}
+.input-with-unit {
+    border-bottom: var(--sdfi_action) solid 1px;
+    display: inline-flex;
+    flex: 1;
+    height: 1.5em;
 
-    .input-field {
-        border-bottom: var(--sdfi-action) solid 1px;
-        display: inline-flex;
-        flex: 1;
-        /* width: 10%; */
-        /* margin-right: 0.5rem; */
-        /* padding-bottom: 0.25rem; */
-        input {
-            height: 24px;
-            padding-left: 5px !important;
-        }
+    input {
+        border: none;
+        height: 1em;
+        padding-left: 5px;
     }
 }
 
-.isDegreesInput {
-    margin-top: 0.25rem;
-    display: inline-flex;
-    align-items: center;
-    width: 100%;
-}
-.isMetresInput {
-    width: 33%;
-}
+// .isDegreesInput {
+//     margin-top: 0.25rem;
+//     display: inline-flex;
+//     align-items: center;
+//     width: 100%;
+// }
+// .isMetresInput {
+//     width: 33%;
+// }
 .units {
     padding-top: .15rem;
-    transform: translateX(-1.5em);
+    // transform: translateX(-1.5rem);
 }
 
 /*

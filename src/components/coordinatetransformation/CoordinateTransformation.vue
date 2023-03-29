@@ -1,6 +1,6 @@
 <template>
     <Transition name="close">
-        <div v-show="menuOpen || window.width > 1000" class="coordinate-transformation-box" ref="mother">
+        <div class="coordinate-transformation-box" v-show="menuOpen || window.width > 1000" ref="mother">
             <InputCard class="input-card"
                 @input-epsg-changed="inputEPSGChanged"
                 @error-occurred="errorOccurred"

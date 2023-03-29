@@ -18,6 +18,6 @@ h5 {
     break-inside: avoid;
     line-break: strict;
     hyphens: none;
-    color: var(--sdfi-black);
+    color: var(--sdfi_black);
 }
 </style>

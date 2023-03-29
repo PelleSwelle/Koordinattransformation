@@ -1,17 +1,16 @@
 <template>
+    <section class="nav-container">
+
     <nav class="ds-nav-main" data-theme="light"
         v-show='window.width > minWidth || (burgerClicked && window.width < minWidth)'
         :class="{'menuDropDown': burgerClicked}">
             <ul>
-                <router-link
+                <router-link class="brand"
                     @click="clearFilters"
-                    to="/"
-                    class="brand"
-                >
+                    to="/">
                     <SdfiLogo/>
 
-                    <div
-                        class="brand-name"
+                    <div class="brand-name"
                         @mouseenter.stop="isHovering = true"
                         @mouseleave.stop="isHovering = false"
                     >
@@ -41,6 +40,8 @@
 
         </nav>
         <BurgerIcon v-show='window.width < minWidth' @click="handleClick"/>
+    </section>
+
 </template>
 
 <script>
@@ -107,11 +108,15 @@ export default {
 
 <style scoped lang="scss">
 
+.nav-container {
+    height: 4rem;
+}
 .brand {
-    padding-top: 0.5rem;
+    // padding-top: 0.5rem;
     display: flex;
     cursor: default;
     grid-column: 1;
+    margin-left: 50px;
 
     .brand-name {
     align-self: flex-start;
